@@ -1,13 +1,13 @@
 {
-  "version": "0.0.0",
+  "version": "0.0.1",
   "license": "MIT",
   "name": "restyle",
-  "description": "",
+  "description": "a JS to CSS transformer",
   "homepage": "https://github.com/WebReflection/restyle",
   "keywords": [],
   "author": {
-    "name": "",
-    "web": ""
+    "name": "Andrea Giammarchi",
+    "web": "http://webreflection.blogspot.com/"
   },
   "repository": {
     "type": "git",
@@ -17,7 +17,7 @@
   "scripts": {
     "test": "node test/.test.js"
   },
-  "dependencies": {
+  "devDependencies": {
     "wru": ">= 0.0.0"
   }
 }
