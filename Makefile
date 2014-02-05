@@ -79,7 +79,6 @@ preview:
 	rm README.md.htm README.md.html
 
 pages:
-	git pull --rebase
 	make var
 	mkdir -p ~/tmp
 	mkdir -p ~/tmp/$(REPO)
