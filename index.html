@@ -8,12 +8,20 @@
     <title>Restyle</title>
   </head>
   <body>
+    <h3>try it</h3>
+    <div class="compare">
+      <div><textarea id="code" rows="10">restyle({
+  // css
+}, [
+  // prefixes
+]);</textarea><pre></pre><button>linkify</button></div><br/>
+    </div>
     <h3>basic example</h3>
     <div class="compare">
       <div><pre>
 restyle({
   body: {
-    background: '#EEE;'
+    background: '#EEE'
   }
 }, []);
       </pre><pre>
@@ -152,5 +160,44 @@ body > div{
 }
       </pre></div><br/>
     </div>
+    <script src="javascripts/cssbeautify.js"></script>
+    <script src="test/build/restyle.js"></script>
+    <script>
+    /*@cc_on // @source https://gist.github.com/WebReflection/7286687
+    (function(f){
+     window.setTimeout =f(window.setTimeout);
+     window.setInterval =f(window.setInterval);
+    })(function(f){return function(c,t){var a=[].slice.call(arguments,2);return f(function(){c.apply(this,a)},t)}});
+    @*/
+    var Delayed=function(e){function d(){Infinity===this.waiting&&0===this.waiting||clearTimeout(this.waiting);this.waiting=0}function f(c,b,a,d){c.waiting=0;b.apply(a,d)}function c(e,b){function a(){d.call(a);a.waiting=setTimeout(f,b,a,e,this,arguments)}b||(b=c.delay);a.clear=d;a.waiting=Infinity;return a}c.delay=e;return c}(500);
+    (function(){
+      function onkeyup(){
+        try {
+          var obj = Function('return ' + this.value.replace(/^\s+/, ''))();
+          obj.remove();
+          pre[text] = cssbeautify('' + obj);
+        } catch(o_O){
+          // invalid syntax
+        }
+        this.rows = Math.max(rows, this.value.split(/[\n\r]/).length + 1);
+      }
+      var
+        code = document.getElementById('code'),
+        pre = code.nextSibling,
+        linkify = pre.nextSibling,
+        text = 'textContent' in pre ? 'textContent' : 'innerText',
+        rows = code.rows,
+        value = location.href.split('?').slice(1).join('')
+      ;
+      linkify.onclick = function () {
+        location.href = location.href.split('?')[0] + '?' + encodeURIComponent(code.value);
+      };
+      code.onkeyup = Delayed(onkeyup, 1000);
+      if (value.length) {
+        code.value = decodeURIComponent(value);
+        onkeyup.call(code);
+      }
+    }());
+    </script>
   </body>
 </html>
