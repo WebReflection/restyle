@@ -1,52 +1,156 @@
 <!DOCTYPE html>
 <html>
-
   <head>
     <meta charset='utf-8' />
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
     <meta name="description" content="Restyle : " />
-
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
     <title>Restyle</title>
   </head>
-
   <body>
+    <h3>basic example</h3>
+    <div class="compare">
+      <div><pre>
+restyle({
+  body: {
+    background: '#EEE;'
+  }
+}, []);
+      </pre><pre>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/WebReflection/restyle">View on GitHub</a>
-
-          <h1 id="project_title">Restyle</h1>
-          <h2 id="project_tagline"></h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/WebReflection/restyle/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/WebReflection/restyle/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
+body {
+  background: #EEE;
+}
+      </pre></div><br/>
     </div>
+    <h3>some nested property</h3>
+    <div class="compare">
+      <div><pre>
+restyle({
+  'body:last-child': {
+    background: {
+      color: 'transparent',
+      image: 'url("some-image.png")',
+      repeat: 'no-repeat'
+    }
+  }
+}, []);
+      </pre><pre>
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h1>
-<a name="restyle" class="anchor" href="#restyle"><span class="octicon octicon-link"></span></a>restyle</h1>
-
-<p><a href="http://travis-ci.org/WebReflection/restyle"><img src="https://secure.travis-ci.org/WebReflection/restyle.png" alt="build status"></a></p>
-      </section>
+body:last-child {
+  background-color: transparent;
+  background-image: url("some-image.png");
+  background-repeat: no-repeat;
+}
+      </pre></div><br/>
     </div>
+    <h3>using some vendor prefix</h3>
+    <div class="compare">
+      <div><pre>
+restyle({
+  'div > button:first-child': {
+    transform: 'rotate(30deg)'
+  }
+}, ['moz', 'webkit']);
+      </pre><pre>
 
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Restyle maintained by <a href="https://github.com/WebReflection">WebReflection</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
+div > button:first-child {
+  -webkit-transform: rotate(30deg);
+  -moz-transform: rotate(30deg);
+  transform: rotate(30deg);
+}
+      </pre></div><br/>
     </div>
+    <h3>@special key with all vendor prefixes</h3>
+    <div class="compare">
+      <div><pre>
+restyle({
+  'body > div': {
+    animation: {
+      name: 'spin',
+      duration: '4s'
+    }
+  },
+  '@keyframes spin': {
+    from: {
+      transform: 'rotate(0deg)'
+    },
+    to: {
+      transform: 'rotate(360deg)'
+    }
+  }
+});
+      </pre><pre>
 
-    
-
+body > div{
+  -webkit-animation-name:spin;
+  -moz-animation-name:spin;
+  -ms-animation-name:spin;
+  -o-animation-name:spin;
+  animation-name:spin;
+  -webkit-animation-duration:4s;
+  -moz-animation-duration:4s;
+  -ms-animation-duration:4s;
+  -o-animation-duration:4s;
+  animation-duration:4s;
+}
+@-webkit-keyframes spin{
+  from{
+    -webkit-transform:rotate(0deg);
+    transform:rotate(0deg);
+  }
+  to{
+    -webkit-transform:rotate(360deg);
+    transform:rotate(360deg);
+  }
+}
+@-moz-keyframes spin{
+  from{
+    -moz-transform:rotate(0deg);
+    transform:rotate(0deg);
+  }
+  to{
+    -moz-transform:rotate(360deg);
+    transform:rotate(360deg);
+  }
+}
+@-ms-keyframes spin{
+  from{
+    -ms-transform:rotate(0deg);
+    transform:rotate(0deg);
+  }
+  to{
+    -ms-transform:rotate(360deg);
+    transform:rotate(360deg);
+  }
+}
+@-o-keyframes spin{
+  from{
+    -o-transform:rotate(0deg);
+    transform:rotate(0deg);
+  }
+  to{
+    -o-transform:rotate(360deg);
+    transform:rotate(360deg);
+  }
+}
+@keyframes spin{
+  from{
+    -webkit-transform:rotate(0deg);
+    -moz-transform:rotate(0deg);
+    -ms-transform:rotate(0deg);
+    -o-transform:rotate(0deg);
+    transform:rotate(0deg);
+  }
+  to{
+    -webkit-transform:rotate(360deg);
+    -moz-transform:rotate(360deg);
+    -ms-transform:rotate(360deg);
+    -o-transform:rotate(360deg);
+    transform:rotate(360deg);
+  }
+}
+      </pre></div><br/>
+    </div>
   </body>
 </html>
