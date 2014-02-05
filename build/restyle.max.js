@@ -115,15 +115,19 @@ var restyle = (function (has) {
     restyle = function (obj, prefixes, doc) {
       var d = doc || document,
         css = parse(obj, prefixes || restyle.prefixes),
-        node = (
-          d.header ||
-          d.getElementsByTagName('header')[0] ||
-          d.documentElement
-        ).appendChild(
-          d.createElement('style')
+        head = d.head ||
+          d.getElementsByTagName('head')[0] ||
+          d.documentElement,
+        node = head.insertBefore(
+          d.createElement('style'),
+          head.lastChild
         );
       node.type = 'text/css';
-      node.appendChild(d.createTextNode(css));
+      if ('styleSheet' in node) {
+        node.styleSheet.cssText = css;
+      } else {
+        node.appendChild(d.createTextNode(css));
+      }
       return new ReStyle(node, css);
     };
   }
