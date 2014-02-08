@@ -3,5 +3,6 @@ test/*
 template/*
 node_modules/*
 build/*.amd.js
+build/*.max.js
 Makefile
 index.html

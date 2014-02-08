@@ -173,5 +173,20 @@ wru.test([
         wru.assert('it probably spinned');
       }), 2000);
     }
+  },{
+    name: 'camel to CSS',
+    test: function() {
+      var obj = restyle({
+        body: {
+          marginLeft: 32
+        }
+      }, []);
+      wru.assert(obj == ''.concat(
+        'body{',
+          'margin-left:32px;',
+        '}'
+      ));
+      if (hasDOM) obj.remove();
+    }
   }
 ]);

@@ -1,7 +1,8 @@
 (function (has) {
   'use strict';
 
-  var restyle;
+  var camelFind = /([a-z])([A-Z])/g,
+      restyle;
 
   function ReStyle(node, css) {
     this.node = node;
@@ -21,15 +22,20 @@
     }
   };
 
+  function camelReplace(m, $1, $2) {
+    return $1 + '-' + $2.toLowerCase();
+  }
+
   function create(key, value, prefixes) {
     var
       css = [],
       pixels = typeof value === 'number' ? 'px' : '',
+      k = key.replace(camelFind, camelReplace),
       i = prefixes.length;
     while (i--) {
-      css.push('-', prefixes[i], '-', key, ':', value, pixels, ';');
+      css.push('-', prefixes[i], '-', k, ':', value, pixels, ';');
     }
-    css.push(key, ':', value, pixels, ';');
+    css.push(k, ':', value, pixels, ';');
     return css.join('');
   }
 
