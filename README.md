@@ -419,3 +419,53 @@ body > div{
   }
 }
 ```
+
+### What Is NOT
+Just to be clear what `restyle` is not responsible or capable of, is to make everything magically works as others might be.
+
+As example, `flex-box` is not fixed, neither is any early implementation of some broken CSS property.
+However, you can simply combine a common class fix for flex-box and use `restyle` to add more or simply specify other properties.
+
+Last but not least, you are free to fix things by your own deciding very specific CSS accordingly with the browser if done at runtime or simply trusting other pre-processors if done on the server side.
+
+```javascript
+var flexValue = '1 200px',
+    orderValue = 2;
+restyle({
+  '.item': {
+    boxFlex: flexValue,
+    flex: flexValue,
+    boxOrdinalGroup: orderValue,
+    flexOrder: orderValue,
+    order: orderValue
+  }
+});
+```
+
+### TODO
+Just realized that in some case it would be useful to repeat the property with different values so that the following
+```javascript
+var flexBox = [
+  '-webkit-box',
+  '-moz-box',
+  '-ms-flexbox',
+  '-webkit-flex',
+  'flex'
+];
+restyle({
+  '.wrapper': {
+    display: flexBox
+  }
+});
+```
+will be usable to produce, as example:
+```css
+.wrapper {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+```
+If you have any other hint/suggestion please let me know, thanks.
