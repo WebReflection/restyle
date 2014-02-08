@@ -213,5 +213,34 @@ wru.test([
       ));
       if (hasDOM) obj.remove();
     }
+  },{
+    name: 'nested with nested with nested ...',
+    test: function () {
+      var obj = restyle({
+        body: {
+          any: {
+            thing: {
+              i: {
+                want: 'OK'
+              }
+            }
+          },
+          background: {
+            position: {
+              x: 10,
+              y: '50%'
+            }
+          }
+        }
+      }, []);
+      wru.assert(obj == ''.concat(
+        'body{',
+          'any-thing-i-want:OK;',
+          'background-position-x:10px;',
+          'background-position-y:50%;',
+        '}'
+      ));
+      if (hasDOM) obj.remove();
+    }
   }
 ]);
