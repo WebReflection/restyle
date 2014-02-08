@@ -3,6 +3,8 @@ restyle
 
 [![build status](https://secure.travis-ci.org/WebReflection/restyle.png)](http://travis-ci.org/WebReflection/restyle)
 
+Yes, this function has been inspired by [absurd.js](http://krasimir.github.io/absurd/) but it is not exactly the same.
+Cool part is, you can use both via browsers or as pre-processor, feel free!
 
 ### In A Nutshell
 `restyle` is a function able to transform the following:
