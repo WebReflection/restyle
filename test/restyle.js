@@ -96,7 +96,7 @@ wru.test([
             transform: 'rotate(360deg)'
           }
         }
-      });
+      }, hasDOM ? null : restyle.prefixes);
       // should produce the following
       wru.log(obj == ''.concat(
         'body > div{',

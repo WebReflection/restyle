@@ -89,8 +89,9 @@
   }
 
   if (typeof document === 'undefined') {
+    // in node, by default, no prefixes are used
     restyle = function (obj, prefixes) {
-      return parse(obj, prefixes || restyle.prefixes);
+      return parse(obj, prefixes || Array.prototype);
     };
     // useful for different style of require
     restyle.restyle = restyle;
