@@ -96,7 +96,7 @@ wru.test([
             transform: 'rotate(360deg)'
           }
         }
-      });
+      }, hasDOM ? null : restyle.prefixes);
       // should produce the following
       wru.log(obj == ''.concat(
         'body > div{',
@@ -172,6 +172,21 @@ wru.test([
         hasDOM && obj.remove();
         wru.assert('it probably spinned');
       }), 2000);
+    }
+  },{
+    name: 'camel to CSS',
+    test: function() {
+      var obj = restyle({
+        body: {
+          marginLeft: 32
+        }
+      }, []);
+      wru.assert(obj == ''.concat(
+        'body{',
+          'margin-left:32px;',
+        '}'
+      ));
+      if (hasDOM) obj.remove();
     }
   }
 ]);
