@@ -178,69 +178,84 @@ restyle(
 The first `Object` parameter in `restyle` signature is spec'd as such:
 ```
 
-selector                any CSS selector
-                        {
-                          body: {
-                            // ... 
-                          },
-                          'ul.dat > li:first-child': {
-                            // ...
-                          }
-                        }
+selector        any CSS selector
+                {
+                  body: {
+                    // ... 
+                  },
+                  'ul.dat > li:first-child': {
+                    // ...
+                  }
+                }
 
-property                a property name or a group name
-                        {
-                          div: {
-                            // properties
-                            width: 256, // will result in "256px"
-                            transform: 'rotate(360deg)',
-                            background: 'transparent url(image.png) 0 0'
-                          }
-                        }
-                        camelCase will be translated into camel-case
-                        (backgroundImage => background-image)
+property        a property name or a group name
+                {
+                  div: {
+                    // properties
+                    width: 256, // will result in "256px"
+                    transform: 'rotate(360deg)',
+                    background: 'transparent url(image.png) 0 0'
+                  }
+                }
+                camelCase will be translated into camel-case
+                (backgroundImage => background-image)
 
-value                   the property value or a group of properties
-                        if int, will be set as 'px' value
+value           the property value or a group of properties
+                if int, will be set as 'px' value
 
-group                   key/value properties names/values object
-                        {
-                          div: {
-                            // group
-                            background: {
-                              color: 'transparent',
-                              image: 'url(image.png)',
-                              position: '0 0'
-                            }
-                          }
-                        }
+group           key/value properties names/values object
+                or
+                an Array of possible values for the property
+                {
+                  div: {
+                    // group
+                    background: {
+                      color: 'transparent',
+                      image: 'url(image.png)',
+                      position: '0 0'
+                    }
+                  }
+                }
+                or
+                {
+                  '.flexbox': {
+                    // mutiple values
+                    display: [
+                      '-webkit-box',
+                      '-moz-box',
+                      '-ms-flexbox',
+                      '-webkit-flex',
+                      'flex'
+                    ]
+                  }
+                }
 
-special                 keyframes, media queries,
-                        anything that starts with @
-                        {
-                          div: {
-                            // as before
-                          },
-                          // special selectors
-                          '@keyframes spin': {
-                            // cpecialContent
-                          }
-                        }
+special         keyframes, media queries,
+                anything that starts with @
+                {
+                  div: {
+                    // as before
+                  },
+                  // special selectors
+                  '@keyframes spin': {
+                    // cpecialContent
+                  }
+                }
 
-specialContent          everything supported by restyle as CSS
-                        {
-                          // special selectors
-                          '@keyframes spin': {
-                            // properties => values or groups
-                            '0%':   {transform: 'rotate(0deg)'},
-                            '100%': {transform: 'rotate(360deg)'}
-                          },
-                          '@media all and (color)': {
-                            'body': {
-                              background: randomRainbow()
-                            }
-                          }
-                        }
+specialContent  everything supported by restyle as CSS
+                {
+                  // special selectors
+                  '@keyframes spin': {
+                    // properties => values or groups
+                    '0%':   {transform: 'rotate(0deg)'},
+                    '100%': {transform: 'rotate(360deg)'}
+                  },
+                  '@media all and (color)': {
+                    'body': {
+                      background: randomRainbow()
+                    }
+                  }
+                }
 
 ```
 
@@ -421,12 +436,12 @@ body > div{
 ```
 
 ### What Is NOT
-Just to be clear what `restyle` is not responsible or capable of, is to make everything magically works as others might be.
+Just to be clear what `restyle` is not a CSS validator, beautifier, or uglifier, plus it is not responsible or capable of making everything magically works.
 
-As example, `flex-box` is not fixed, neither is any early implementation of some broken CSS property.
-However, you can simply combine a common class fix for flex-box and use `restyle` to add more or simply specify other properties.
+As example, `flex-box` is not fixed, neither early or non standard implementation of any feature.
+However, **you can simply combine** a common class fix for flex-box and use `restyle` to add more or simply specify other properties, there are no implicit limits in what you can write through `restyle`.
 
-Last but not least, you are free to fix things by your own deciding very specific CSS accordingly with the browser if done at runtime or simply trusting other pre-processors if done on the server side.
+**You are free to fix things** indeed by your own, deciding very specific CSS accordingly with the browser if done at runtime or simply trusting other pre-processors if done on the server side with the benefit that the object will be reused in both worlds, as example:
 
 ```javascript
 var flexValue = '1 200px',
@@ -438,7 +453,8 @@ var flexValue = '1 200px',
       '-webkit-flex',
       'flex'
     ];
-restyle({
+
+var flex = restyle({
   '.wrapper': {
     display: flexBox
   },
