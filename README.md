@@ -472,8 +472,8 @@ var flex = restyle({
 
 ### F.A.Q.
 
-  * **why so many prefixes in the DOM version ?** I've hopefully [replied to this here](http://webreflection.blogspot.com/2014/02/restylejs-simplified-css-approach.html#prefixes) already ;-)
+  * **why so many prefixes in the DOM version ?** Not influent at runtime, invisible via node, but I've hopefully [replied to this here](http://webreflection.blogspot.com/2014/02/restylejs-simplified-css-approach.html#prefixes) already ;-)
   * **should I serve all CSS only via `restyle` ?** you can do whatever you want. You can combine normal CSS with restyle in order to add special FX only or new features where prefixes are a mess. You can use restyle only to fix things that need to be fixed for browsers that support JS. You can use only `restyle` if your app depends on JavaScript so there's no way it's going to be used or useful at all without JS enabled. You chose, don't blame the tool, it's here to help when needed ;-)
-  * **didn't Netscape with [JSSS](http://en.wikipedia.org/wiki/JavaScript_Style_Sheets) ... bla bla** you didn't read what `restyle` is, neither what was JSSS proposal. Please take a minute to understand again what is this about, and feel free to use JSSS if you think that's even an option.
+  * **didn't Netscape with [JSSS](http://en.wikipedia.org/wiki/JavaScript_Style_Sheets) ... bla bla?** probably you didn't read what `restyle` is, neither what JSSS proposal was. Please take a minute to understand again what is this about, and feel free to use JSSS if you think that's even an option.
 
 If you have any hint about some syntax that could improve `restyle` ease please let me know, thanks.
