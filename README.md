@@ -430,8 +430,18 @@ Last but not least, you are free to fix things by your own deciding very specifi
 
 ```javascript
 var flexValue = '1 200px',
-    orderValue = 2;
+    orderValue = 2,
+    flexBox = [
+      '-webkit-box',
+      '-moz-box',
+      '-ms-flexbox',
+      '-webkit-flex',
+      'flex'
+    ];
 restyle({
+  '.wrapper': {
+    display: flexBox
+  },
   '.item': {
     boxFlex: flexValue,
     flex: flexValue,
@@ -442,30 +452,8 @@ restyle({
 });
 ```
 
-### TODO
-Just realized that in some case it would be useful to repeat the property with different values so that the following
-```javascript
-var flexBox = [
-  '-webkit-box',
-  '-moz-box',
-  '-ms-flexbox',
-  '-webkit-flex',
-  'flex'
-];
-restyle({
-  '.wrapper': {
-    display: flexBox
-  }
-});
-```
-will be usable to produce, as example:
-```css
-.wrapper {
-  display: -webkit-box;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: flex;
-}
-```
-If you have any other hint/suggestion please let me know, thanks.
+### F.A.Q.
+
+  * **why so many prefixes in the DOM version ?** I've hopefully [replied to this here](http://webreflection.blogspot.com/2014/02/restylejs-simplified-css-approach.html#prefixes) already ;-)
+
+If you have any hint about some syntax that could improve `restyle` ease please let me know, thanks.

@@ -1,7 +1,11 @@
 (function (has) {
   'use strict';
 
-  var camelFind = /([a-z])([A-Z])/g,
+  var isArray = Array.isArray || function (arr) {
+        return toString.call(arr) === '[object Array]';
+      },
+      camelFind = /([a-z])([A-Z])/g,
+      toString = {}.toString,
       restyle;
 
   function ReStyle(node, css) {
@@ -39,23 +43,26 @@
     return css.join('');
   }
 
-  function generate(obj, prefixes) {
-    var
-      css = [],
-      key,
-      value,
-      k;
+  function generate(css, previous, obj, prefixes) {
+    var key, value, i;
     for (key in obj) {
       if (has.call(obj, key)) {
         if (typeof obj[key] === 'object') {
-          value = obj[key];
-          for (k in value) {
-            if (has.call(value, k)) {
-              css.push(create(key + '-' + k, value[k], prefixes));
+          if (isArray(obj[key])) {
+            value = obj[key];
+            for (i = 0; i < value.length; i++) {
+              css.push(create(property(previous, key), value[i], prefixes));
             }
+          } else {
+            generate(
+              css,
+              property(previous, key),
+              obj[key],
+              prefixes
+            );
           }
         } else {
-          css.push(create(key, obj[key], prefixes));
+          css.push(create(property(previous, key), obj[key], prefixes));
         }
       }
     }
@@ -77,15 +84,19 @@
           while (i--) {
             css.push('@-', prefixes[i], '-', key, '{',
               parse(value, [prefixes[i]]),
-              '}');
+            '}');
           }
           css.push('@', key, '{', parse(value, prefixes), '}');
         } else {
-          css.push(key, '{', generate(value, prefixes), '}');
+          css.push(key, '{', generate([], '', value, prefixes), '}');
         }
       }
     }
     return css.join('');
+  }
+
+  function property(previous, key) {
+    return previous.length ? previous + '-' + key : key;
   }
 
   if (typeof document === 'undefined') {

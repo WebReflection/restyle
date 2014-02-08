@@ -188,5 +188,30 @@ wru.test([
       ));
       if (hasDOM) obj.remove();
     }
+  },{
+    name: 'single property as Array',
+    test: function () {
+      var obj = restyle({
+        '.flexbox': {
+          display: [
+            '-webkit-box',
+            '-moz-box',
+            '-ms-flexbox',
+            '-webkit-flex',
+            'flex'
+          ]
+        }
+      }, []);
+      wru.assert(obj == ''.concat(
+        '.flexbox{',
+          'display:-webkit-box;',
+          'display:-moz-box;',
+          'display:-ms-flexbox;',
+          'display:-webkit-flex;',
+          'display:flex;',
+        '}'
+      ));
+      if (hasDOM) obj.remove();
+    }
   }
 ]);
