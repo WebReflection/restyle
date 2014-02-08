@@ -5,7 +5,7 @@ restyle
 
 
 ### In A Nutshell
-`restyle` is a library able to transform the following:
+`restyle` is a function able to transform the following:
 
 ```javascript
 // we are in a browser
