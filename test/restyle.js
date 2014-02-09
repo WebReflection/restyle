@@ -242,5 +242,32 @@ wru.test([
       ));
       if (hasDOM) obj.remove();
     }
+  },{
+    name: '@page and @font-face declarations',
+    test: function () {
+      var obj = restyle({
+        '@page :pseudo-class': {
+          margin: '2in'
+        },
+        '@font-face': {
+          font: {
+            family: 'restyled',
+            weight: 'normal',
+            style: 'bold'
+          }
+        }
+      }, []);
+      wru.assert(obj == ''.concat(
+        '@page :pseudo-class{',
+          'margin:2in;',
+        '}',
+        '@font-face{',
+          'font-family:restyled;',
+          'font-weight:normal;',
+          'font-style:bold;',
+        '}'
+      ));
+      if (hasDOM) obj.remove();
+    }
   }
 ]);

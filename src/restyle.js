@@ -5,6 +5,7 @@
     toString = O.toString,
     has = O.hasOwnProperty,
     camelFind = /([a-z])([A-Z])/g,
+    ignoreSpecial = /^@(?:page|font-face)/,
     isArray = Array.isArray || function (arr) {
       return toString.call(arr) === '[object Array]';
     },
@@ -87,7 +88,7 @@
       key, value, i, j;
     for (key in obj) {
       if (has.call(obj, key)) {
-        special = key.charAt(0) === '@';
+        special = key.charAt(0) === '@' && !ignoreSpecial.test(key);
         k = special ? key.slice(1) : key;
         value = empty.concat(obj[key]);
         for (i = 0; i < value.length; i++) {
@@ -147,5 +148,11 @@
   ];
 
   return restyle;
+
+/**
+ * not sure if TODO since this might be prependend regardless the parser
+ *  @namespace url(http://www.w3.org/1999/xhtml);
+ *  @charset "UTF-8";
+ */
 
 }({}))
