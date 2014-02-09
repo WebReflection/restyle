@@ -3,8 +3,11 @@ restyle
 
 [![build status](https://secure.travis-ci.org/WebReflection/restyle.png)](http://travis-ci.org/WebReflection/restyle)
 
-Yes, this function has been inspired by [absurd.js](http://krasimir.github.io/absurd/) but it is not exactly the same.
-Cool part is, you can use both via browsers or as pre-processor, feel free!
+This project has been somehow inspired by [absurd.js](http://krasimir.github.io/absurd/) but it is not exactly the same.
+
+You can check [restyle specifications](https://github.com/WebReflection/restyle/blob/master/specs.md#restyle-object-specifications) or go directly to a [face 2 face against absurd](https://github.com/WebReflection/restyle/blob/master/VS.md#restyle-vs-absurd-by-examples) but the long story short is that no JavaScript library out there fits in about 1KB and feels as natural as `restyle` does in typing CSS.
+
+Good news is, you can choose more now but let's see what's in the menu here ;-)
 
 ### In A Nutshell
 `restyle` is a function able to transform the following:
