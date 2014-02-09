@@ -253,6 +253,42 @@ restyle({
 ```
 will produce exactly same CSS.
 
+
+### mixins
+
+In this case `restyle` has a very simple implementation, values as `Array`
+```javascript
+function red() {
+  return {
+    color: '#FFF',
+    background: '#A30'
+  };
+}
+function bordered() {
+  return {
+    border: '1px solid black'
+  };
+}
+restyle({
+  '.red-bordered': [
+    red(),
+    bordered()
+  ]
+});
+```
+Due simplicity of its parser, the generated layout will look like the following:
+```css
+.red-bordered {
+  color: #FFF;
+  background: #A30;
+}
+.red-bordered {
+  border: 1px solid black;
+}
+```
+Once again, `restyle` goal is to "just work" in the smallest, simplest, yet efficient way to think CSS via JS objects.
+
+
 ### Conclusions
 Other cases are probably not possible in `restyle` as well as few `restyle` cases are not possible in `absurd`.
 
