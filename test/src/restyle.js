@@ -1,12 +1,15 @@
-(function (has) {
+(function (O) {
   'use strict';
 
-  var isArray = Array.isArray || function (arr) {
-        return toString.call(arr) === '[object Array]';
-      },
-      camelFind = /([a-z])([A-Z])/g,
-      toString = {}.toString,
-      restyle;
+  var
+    toString = O.toString,
+    has = O.hasOwnProperty,
+    camelFind = /([a-z])([A-Z])/g,
+    isArray = Array.isArray || function (arr) {
+      return toString.call(arr) === '[object Array]';
+    },
+    empty = [],
+    restyle;
 
   function ReStyle(node, css) {
     this.node = node;
@@ -43,6 +46,10 @@
     return css.join('');
   }
 
+  function property(previous, key) {
+    return previous.length ? previous + '-' + key : key;
+  }
+
   function generate(css, previous, obj, prefixes) {
     var key, value, i;
     for (key in obj) {
@@ -51,7 +58,9 @@
           if (isArray(obj[key])) {
             value = obj[key];
             for (i = 0; i < value.length; i++) {
-              css.push(create(property(previous, key), value[i], prefixes));
+              css.push(
+                create(property(previous, key), value[i], prefixes)
+              );
             }
           } else {
             generate(
@@ -62,7 +71,9 @@
             );
           }
         } else {
-          css.push(create(property(previous, key), obj[key], prefixes));
+          css.push(
+            create(property(previous, key), obj[key], prefixes)
+          );
         }
       }
     }
@@ -72,37 +83,37 @@
   function parse(obj, prefixes) {
     var
       css = [],
-      key,
-      value,
-      i;
+      special, k, v,
+      key, value, i, j;
     for (key in obj) {
       if (has.call(obj, key)) {
-        value = obj[key];
-        if (key.charAt(0) === '@') {
-          key = key.slice(1);
-          i = (prefixes || '').length;
-          while (i--) {
-            css.push('@-', prefixes[i], '-', key, '{',
-              parse(value, [prefixes[i]]),
-            '}');
+        special = key.charAt(0) === '@';
+        k = special ? key.slice(1) : key;
+        value = empty.concat(obj[key]);
+        for (i = 0; i < value.length; i++) {
+          v = value[i];
+          if (special) {
+            j = prefixes.length;
+            while (j--) {
+              css.push('@-', prefixes[j], '-', k, '{',
+                parse(v, [prefixes[j]]),
+                '}');
+            }
+            css.push(key, '{', parse(v, prefixes), '}');
+          } else {
+            css.push(key, '{', generate([], '', v, prefixes), '}');
           }
-          css.push('@', key, '{', parse(value, prefixes), '}');
-        } else {
-          css.push(key, '{', generate([], '', value, prefixes), '}');
         }
       }
     }
     return css.join('');
   }
 
-  function property(previous, key) {
-    return previous.length ? previous + '-' + key : key;
-  }
-
+  // JSLint, we meet again ...
   if (typeof document === 'undefined') {
     // in node, by default, no prefixes are used
     restyle = function (obj, prefixes) {
-      return parse(obj, prefixes || Array.prototype);
+      return parse(obj, prefixes || empty);
     };
     // useful for different style of require
     restyle.restyle = restyle;
@@ -118,6 +129,7 @@
           head.lastChild
         );
       node.type = 'text/css';
+      // JSLint, we meet again ...
       if ('styleSheet' in node) {
         node.styleSheet.cssText = css;
       } else {
@@ -136,4 +148,4 @@
 
   return restyle;
 
-}({}.hasOwnProperty))
+}({}))
