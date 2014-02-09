@@ -1,4 +1,4 @@
-/*jslint forin: true, plusplus: true, indent: 2, browser: true */
+/*jslint forin: true, plusplus: true, indent: 2, browser: true, unparam: true */
 /*!
 Copyright (C) 2014 by Andrea Giammarchi - @WebReflection
 
@@ -21,15 +21,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-var restyle = (function (has) {
+var restyle = (function (O) {
   'use strict';
 
-  var isArray = Array.isArray || function (arr) {
-        return toString.call(arr) === '[object Array]';
-      },
-      camelFind = /([a-z])([A-Z])/g,
-      toString = {}.toString,
-      restyle;
+  var
+    toString = O.toString,
+    has = O.hasOwnProperty,
+    camelFind = /([a-z])([A-Z])/g,
+    isArray = Array.isArray || function (arr) {
+      return toString.call(arr) === '[object Array]';
+    },
+    restyle;
 
   function ReStyle(node, css) {
     this.node = node;
@@ -66,6 +68,10 @@ var restyle = (function (has) {
     return css.join('');
   }
 
+  function property(previous, key) {
+    return previous.length ? previous + '-' + key : key;
+  }
+
   function generate(css, previous, obj, prefixes) {
     var key, value, i;
     for (key in obj) {
@@ -74,7 +80,9 @@ var restyle = (function (has) {
           if (isArray(obj[key])) {
             value = obj[key];
             for (i = 0; i < value.length; i++) {
-              css.push(create(property(previous, key), value[i], prefixes));
+              css.push(
+                create(property(previous, key), value[i], prefixes)
+              );
             }
           } else {
             generate(
@@ -85,7 +93,9 @@ var restyle = (function (has) {
             );
           }
         } else {
-          css.push(create(property(previous, key), obj[key], prefixes));
+          css.push(
+            create(property(previous, key), obj[key], prefixes)
+          );
         }
       }
     }
@@ -107,7 +117,7 @@ var restyle = (function (has) {
           while (i--) {
             css.push('@-', prefixes[i], '-', key, '{',
               parse(value, [prefixes[i]]),
-            '}');
+              '}');
           }
           css.push('@', key, '{', parse(value, prefixes), '}');
         } else {
@@ -118,10 +128,7 @@ var restyle = (function (has) {
     return css.join('');
   }
 
-  function property(previous, key) {
-    return previous.length ? previous + '-' + key : key;
-  }
-
+  // JSLint, we meet again ...
   if (typeof document === 'undefined') {
     // in node, by default, no prefixes are used
     restyle = function (obj, prefixes) {
@@ -141,6 +148,7 @@ var restyle = (function (has) {
           head.lastChild
         );
       node.type = 'text/css';
+      // JSLint, we meet again ...
       if ('styleSheet' in node) {
         node.styleSheet.cssText = css;
       } else {
@@ -159,4 +167,4 @@ var restyle = (function (has) {
 
   return restyle;
 
-}({}.hasOwnProperty));
+}({}));

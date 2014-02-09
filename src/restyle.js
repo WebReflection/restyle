@@ -1,12 +1,14 @@
-(function (has) {
+(function (O) {
   'use strict';
 
-  var isArray = Array.isArray || function (arr) {
-        return toString.call(arr) === '[object Array]';
-      },
-      camelFind = /([a-z])([A-Z])/g,
-      toString = {}.toString,
-      restyle;
+  var
+    toString = O.toString,
+    has = O.hasOwnProperty,
+    camelFind = /([a-z])([A-Z])/g,
+    isArray = Array.isArray || function (arr) {
+      return toString.call(arr) === '[object Array]';
+    },
+    restyle;
 
   function ReStyle(node, css) {
     this.node = node;
@@ -43,6 +45,10 @@
     return css.join('');
   }
 
+  function property(previous, key) {
+    return previous.length ? previous + '-' + key : key;
+  }
+
   function generate(css, previous, obj, prefixes) {
     var key, value, i;
     for (key in obj) {
@@ -51,7 +57,9 @@
           if (isArray(obj[key])) {
             value = obj[key];
             for (i = 0; i < value.length; i++) {
-              css.push(create(property(previous, key), value[i], prefixes));
+              css.push(
+                create(property(previous, key), value[i], prefixes)
+              );
             }
           } else {
             generate(
@@ -62,7 +70,9 @@
             );
           }
         } else {
-          css.push(create(property(previous, key), obj[key], prefixes));
+          css.push(
+            create(property(previous, key), obj[key], prefixes)
+          );
         }
       }
     }
@@ -84,7 +94,7 @@
           while (i--) {
             css.push('@-', prefixes[i], '-', key, '{',
               parse(value, [prefixes[i]]),
-            '}');
+              '}');
           }
           css.push('@', key, '{', parse(value, prefixes), '}');
         } else {
@@ -95,10 +105,7 @@
     return css.join('');
   }
 
-  function property(previous, key) {
-    return previous.length ? previous + '-' + key : key;
-  }
-
+  // JSLint, we meet again ...
   if (typeof document === 'undefined') {
     // in node, by default, no prefixes are used
     restyle = function (obj, prefixes) {
@@ -118,6 +125,7 @@
           head.lastChild
         );
       node.type = 'text/css';
+      // JSLint, we meet again ...
       if ('styleSheet' in node) {
         node.styleSheet.cssText = css;
       } else {
@@ -136,4 +144,4 @@
 
   return restyle;
 
-}({}.hasOwnProperty))
+}({}))
