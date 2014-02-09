@@ -437,6 +437,78 @@ body > div{
 }
 ```
 
+### Special Features
+There are few tricks hidden in the simple `restyle` logic where `Array` values are able to combine multiple declarations at once.
+
+#### multiple values, same property
+The most classic example here would be `flex-box` _mess_, simplified through a variable
+```javascript
+var flexBox = [
+  '-webkit-box',
+  '-moz-box',
+  '-ms-flexbox',
+  '-webkit-flex',
+  'flex'
+];
+```
+reusable whenever it's needed:
+```javascript
+restyle({
+  'div.container': {
+    display: flexBox
+  }
+});
+```
+resulting into the following CSS
+```css
+div.container {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+```
+
+#### multiple styles, same selector
+Another example would be _mixins_ or reusable functions in order to define some grouped style and reuse this whenever is needed.
+```javascript
+function flexbox() {
+  return {
+    display: [
+      '-webkit-box',
+      '-moz-box',
+      '-ms-flexbox',
+      '-webkit-flex',
+      'flex'
+    ]
+  };
+}
+function flex(values) {
+  return {
+    boxFlex: values,
+    flex: values
+  };
+}
+function order(value) {
+  return {
+    boxOrdinalGroup: value,
+    flexOrder: value,
+    order: value
+  };
+}
+restyle({
+  '.wrapper': flexbox(),
+  '.item': [
+    flex('1 200px'),
+    order(2)
+  ]
+});
+```
+Above is a `restyle` example of [ths Sass one](http://css-tricks.com/snippets/css/a-guide-to-flexbox/) showed in CSS tricks.
+
+
+
 ### What Is NOT
 Just to be clear what `restyle` is not a CSS validator, beautifier, or uglifier, plus it is not responsible or capable of making everything magically works.
 
