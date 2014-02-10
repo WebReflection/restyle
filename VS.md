@@ -3,6 +3,7 @@ Taking [absurd.js](http://krasimir.github.io/absurd/) test page, here something 
 
 Bear in mind I am stating the obvious all over in this page since `restyle` once again does not add any magic, it's rather a 1:1 with CSS representation.
 
+Check [specs.md](https://github.com/WebReflection/restyle/blob/master/specs.md#restyle-object-specifications) if you want to know more about `restyle` syntax specs.
 
 ### basic object
 
