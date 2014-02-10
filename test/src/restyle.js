@@ -39,8 +39,8 @@
       css = [],
       pixels = typeof value === 'number' ? 'px' : '',
       k = key.replace(camelFind, camelReplace),
-      i = prefixes.length;
-    while (i--) {
+      i;
+    for (i = 0; i < prefixes.length; i++) {
       css.push('-', prefixes[i], '-', k, ':', value, pixels, ';');
     }
     css.push(k, ':', value, pixels, ';');
@@ -141,10 +141,10 @@
   }
 
   restyle.prefixes = [
-    'o',
-    'ms',
+    'webkit',
     'moz',
-    'webkit'
+    'ms',
+    'o'
   ];
 
   return restyle;
