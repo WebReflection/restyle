@@ -1,5 +1,5 @@
 // Copyright (C) 2014 by Andrea Giammarchi - @WebReflection
-var proxy = new Proxy(
+var CSSProxy = new Proxy(
   {
     boundTo: function (method) {
       return this.$[method] || (
@@ -19,6 +19,9 @@ var proxy = new Proxy(
           ('0' + g.toString(16)).slice(-2),
           ('0' + b.toString(16)).slice(-2)
         );
+      },
+      url: function(src) {
+        return 'url("' + src + '");'
       }
     }
   },
