@@ -1,4 +1,4 @@
-.PHONY: build var node amd size hint clean test web preview pages dependencies
+.PHONY: build var node proxy properties amd size hint clean test web preview pages dependencies
 
 # repository name
 REPO = restyle
@@ -12,6 +12,10 @@ NODE = $(VAR)
 # make amd files
 AMD = $(VAR)
 
+LICENSE = template/license.before\
+          LICENSE.txt\
+          template/license.after
+
 # README constant
 
 
@@ -21,6 +25,8 @@ build:
 	make var
 	make node
 	make amd
+	make proxy
+	make properties
 	make test
 #	make hint
 	make size
@@ -30,7 +36,7 @@ var:
 	mkdir -p build
 	cat template/var.before $(VAR) template/var.after >build/no-copy.$(REPO).max.js
 	node node_modules/uglify-js/bin/uglifyjs --verbose build/no-copy.$(REPO).max.js >build/no-copy.$(REPO).js
-	cat template/license.before LICENSE.txt template/license.after build/no-copy.$(REPO).max.js >build/$(REPO).max.js
+	cat $(LICENSE) build/no-copy.$(REPO).max.js >build/$(REPO).max.js
 	cat template/copyright build/no-copy.$(REPO).js >build/$(REPO).js
 	rm build/no-copy.$(REPO).max.js
 	rm build/no-copy.$(REPO).js
@@ -45,10 +51,32 @@ amd:
 	mkdir -p build
 	cat template/amd.before $(AMD) template/amd.after >build/no-copy.$(REPO).max.amd.js
 	node node_modules/uglify-js/bin/uglifyjs --verbose build/no-copy.$(REPO).max.amd.js >build/no-copy.$(REPO).amd.js
-	cat template/license.before LICENSE.txt template/license.after build/no-copy.$(REPO).max.amd.js >build/$(REPO).max.amd.js
+	cat $(LICENSE) build/no-copy.$(REPO).max.amd.js >build/$(REPO).max.amd.js
 	cat template/copyright build/no-copy.$(REPO).amd.js >build/$(REPO).amd.js
 	rm build/no-copy.$(REPO).max.amd.js
 	rm build/no-copy.$(REPO).amd.js
+
+
+# build restyle.proxy
+proxy:
+	mkdir -p build
+	cat src/proxy-a.js src/utils.js src/proxyHandler.js src/proxy-z.js >build/no-copy.$(REPO).max.proxy.js
+	node node_modules/uglify-js/bin/uglifyjs --verbose build/no-copy.$(REPO).max.proxy.js >build/no-copy.$(REPO).proxy.js
+	cat $(LICENSE) build/no-copy.$(REPO).max.proxy.js >build/$(REPO).max.proxy.js
+	cat template/copyright build/no-copy.$(REPO).proxy.js >build/$(REPO).proxy.js
+	rm build/no-copy.$(REPO).max.proxy.js
+	rm build/no-copy.$(REPO).proxy.js
+
+
+# build restyle.properties (similar to proxy but more compatible)
+properties:
+	mkdir -p build
+	cat src/properties-a.js src/utils.js src/properties.js src/properties-z.js >build/no-copy.$(REPO).max.properties.js
+	node node_modules/uglify-js/bin/uglifyjs --verbose build/no-copy.$(REPO).max.properties.js >build/no-copy.$(REPO).properties.js
+	cat $(LICENSE) build/no-copy.$(REPO).max.properties.js >build/$(REPO).max.properties.js
+	cat template/copyright build/no-copy.$(REPO).properties.js >build/$(REPO).properties.js
+	rm build/no-copy.$(REPO).max.properties.js
+	rm build/no-copy.$(REPO).properties.js
 
 size:
 	wc -c build/$(REPO).max.js
