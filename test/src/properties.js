@@ -306,4 +306,3 @@ Object.keys(utils).forEach(function(method){
   }
 });
 
-properties.$ = utils.$;

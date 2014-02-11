@@ -51,7 +51,7 @@ var utils = function(){
           camelCaseReplace
         );
       },
-      $: function () {
+      group: function () {
         return [].join.call(arguments, ' ');
       },
       hex: function (r, g, b) {
@@ -75,7 +75,7 @@ var utils = function(){
         return 'url("' + src.replace(
           doubleQuoteFind,
           doubleQuoteReplace
-        ) + '");'
+        ) + '")'
       }
     }
   ;
