@@ -14,7 +14,7 @@
           overflowX: hidden,
           fontSize: 14,
           lineHeight: 16,
-          fontFamily: 'monospace',
+          fontFamily: monospace,
           padding: 0,
           margin: 0,
           border: none,
@@ -78,8 +78,18 @@
     <div><div><textarea autofocus>{
   'html, body': {
     overflow: hidden,
+    fontSize: 14,
+    lineHeight: 16,
+    fontFamily: monospace,
     padding: 0,
     margin: 0
+  },
+  'section#intro': {
+    background: {
+      color: transparent,
+      image: url('intro.png'),
+      position: $(top, center)
+    }
   }
 }</textarea></div></div>
     <div><div><pre></pre></div></div>
