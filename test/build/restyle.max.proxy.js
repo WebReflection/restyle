@@ -51,6 +51,9 @@ var utils = function(){
           camelCaseReplace
         );
       },
+      $: function () {
+        return [].join.call(arguments, ' ');
+      },
       hex: function (r, g, b) {
         return '#'.concat(
           ('0' + r.toString(16)).slice(-2),
