@@ -97,6 +97,14 @@ var utils = function(){
 
 var properties = Object.create(null);
 [].concat(
+// generic font family
+[
+  'serif',
+  'sans-serif',
+  'cursive',
+  'fantasy',
+  'monospace'
+],
 // basic colors
 [
   'black',
