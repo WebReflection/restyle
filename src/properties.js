@@ -305,3 +305,5 @@ Object.keys(utils).forEach(function(method){
     properties[method] = utils[method];
   }
 });
+
+properties.$ = utils.$;
