@@ -47,6 +47,12 @@ var utils = function(){
           rgba.apply(utils, hexToRgb(r)) :
           'rgba(' + [r, g, b, a] + ')';
       },
+      rotate: function (degrees) {
+        return 'rotate(' + (
+          typeof degrees === 'number' ?
+            (degrees + 'deg') : degrees
+        ) + ')';
+      },
       url: function(src) {
         return 'url("' + src.replace(
           doubleQuoteFind,
