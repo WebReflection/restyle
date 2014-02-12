@@ -1,6 +1,18 @@
 
 var properties = Object.create(null);
 [].concat(
+
+// if you find something missing please let me know, thanks!
+
+// transitions name
+[
+  'linear',
+  'ease',
+  'ease-in',
+  'ease-out',
+  'ease-in-out',
+  'initial'
+],
 // generic font family
 [
   'serif',
@@ -178,7 +190,7 @@ var properties = Object.create(null);
   'yellow',
   'yellowgreen'
 ],
-// all properties
+// all other properties
 [
   'above',
   'absolute',
@@ -193,6 +205,7 @@ var properties = Object.create(null);
   'bold',
   'bolder',
   'bottom',
+  'break-word',
   'capitalize',
   'center',
   'center-left',

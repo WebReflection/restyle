@@ -5,7 +5,7 @@ var proxyHandler = {
         utils.$clash.test(name) : true;
   },
   get: function (target, name, receiver) {
-    return utils.hasOwnProperty(name) ?
+    return name[0] !== '$' && utils.hasOwnProperty(name) ?
       utils[name] :
       utils.$unCamel(name)
     ;
