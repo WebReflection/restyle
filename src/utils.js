@@ -29,9 +29,9 @@ var utils = function(){
       }
       i = hex.length === 6 ? 0 : 2;
       return [
-        parseInt(hex.slice(i, 2), 16),
-        parseInt(hex.slice(i + 2, 4), 16),
-        parseInt(hex.slice(i + 4, 6), 16),
+        parseInt(hex.slice(i, i + 2), 16),
+        parseInt(hex.slice(i + 2, i + 4), 16),
+        parseInt(hex.slice(i + 4, i + 6), 16),
         i ? (parseInt(hex.slice(0, 2), 16) / 255).toFixed(3) : 1
       ];
     },
