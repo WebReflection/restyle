@@ -8,6 +8,47 @@
     <title>Restyle</title>
   </head>
   <body>
+    <h3>extras</h3>
+    <div class="compare">
+      <div><pre>
+// requires very modern browsers (i.e. FF Nightly)
+with(restyle.<a href="proxy/">Proxy</a>){
+  // write CSS via JS naturally
+  $color = rgb('#012');
+  restyle({
+    body: {
+      backgroundColor: white, // look, no quotes needed!
+      color: $color
+    }
+  });
+}
+      </pre><pre>
+// works in every browser but might have missing "names"
+with(restyle.<a href="properties/">properties</a>){
+  // write CSS via JS naturally
+  $color = rgb('#012');
+  restyle({
+    body: {
+      backgroundColor: white, // look, no quotes needed!
+      color: $color
+    }
+  });
+}
+      </pre></div><br/>
+      <div class="methods">
+        <strong>methods:</strong>
+        abs, concat, cubicBezier, floor, hex, join, matrix, matrix3d,
+        max, min, rgb, rgba, rotate, rotate3d, rotateX, rotateY, rotateZ,
+        scale, scale3d, scaleX, scaleY, scaleZ, skew, skewX, skewY,
+        perspective, round, quote,
+        translate, translate3d, translateX, translateY, translateZ, url
+      </div>
+      <div class="methods">
+        <strong>properties:</strong>
+        Proxy has no problems with non-standard properties while the properties compatible version
+        should accept all valid CSS3 known properties. If something is missing please let me know, thanks.
+      </div>
+    </div>
     <h3>try it</h3>
     <div class="compare">
       <div><textarea id="code" rows="10">restyle({

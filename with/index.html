@@ -5,7 +5,7 @@
     <meta name="description" content="Restyle : with" />
     <title>with(restyle.properties)</title>
     <script src="../test/build/restyle.js"></script>
-    <script src="../test/build/restyle.properties.js"></script>
+    <script src="../test/build/restyle.max.properties.js"></script>
     <script src="../javascripts/cssbeautify.js"></script>
     <script>
     with(restyle.properties) {
@@ -49,8 +49,25 @@
         textarea = document.getElementsByTagName('textarea')[0],
         pre = document.getElementsByTagName('pre')[0],
         textContent = 'textContent' in pre ? 'textContent' : 'innerText',
-        value = location.href.split('?')[1]
+        value = location.href.split('?')[1],
+        restyle = window.restyle
       ;
+      (window.restyle = function (object) {
+        return restyle(
+          object,
+          [],
+          {
+            createElement: Object,
+            head: {
+              insertBefore: function () {
+                return {
+                  styleSheet: {}
+                };
+              }
+            }
+          }
+        ).node.styleSheet.cssText;
+      }).properties = restyle.properties;
       pre.onclick = function () {
         location.href = location.href.split('?')[0] + '?' +
           encodeURIComponent(btoa(textarea.value.replace(/^\s+|\s+$/g, '')));
@@ -59,14 +76,21 @@
         value = textarea.value.replace(/^\s+|\s+$/g, '');
         if (value.length) {
           try {
-            value = Function('r','with(r.properties)return r(' + value + ',[])')(restyle);
-            pre[textContent] = cssbeautify(value.valueOf(), {
+            value = Function(
+              'with(restyle.properties){' + (
+                value.indexOf('restyle') < 0 ?
+                  'return restyle(' + value + ')' :
+                  value.replace('restyle', 'return restyle')
+              ) + '}'
+            )();
+            pre[textContent] = cssbeautify(value, {
               indent: '  ',
               openbrace: 'end-of-line',
               autosemicolon: false
             });
-            value.remove();
-          } catch(o_O){}
+          } catch(o_O){
+            throw o_O;
+          }
         }
       });
       if (value) {
@@ -77,33 +101,17 @@
     </script>
   </head>
   <body>
-    <div><div><textarea autofocus>{
+    <div><div><textarea autofocus>$color = rgb('#ABC');
+
+restyle({
   'html, body': {
-    overflow: hidden,
-    padding: 0,
-    margin: 0,
-    lineHeight: 16,
     font: {
       size: 14,
-      family: monospace
+      family: monospace,
+      color: $color
     }
-  },
-  'section#intro': {
-    background: {
-      color: transparent,
-      image: url('intro.png'),
-      position: group(top, center)
-    },
-    animation: {
-      name: 'spin',
-      duration: '4s'
-    }
-  },
-  '@keyframes spin': {
-    from: {transform: rotate(0)},
-    to:   {transform: rotate(360)}
   }
-}</textarea></div></div>
+});</textarea></div></div>
     <div><div><pre></pre></div></div>
   </body>
 </html>

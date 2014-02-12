@@ -38,3 +38,8 @@ div.compare button {
   foat: left;
   margin-top: 16px;
 }
+div.methods {
+  font-size: 14px;
+  color: #333;
+  padding: 16px;
+}
