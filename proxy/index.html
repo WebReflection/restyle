@@ -101,33 +101,16 @@
     </script>
   </head>
   <body>
-    <div><div><textarea autofocus>{
+    <div><div><textarea autofocus>$color = rgb('#ABC');
+restyle({
   'html, body': {
-    overflow: hidden,
-    padding: 0,
-    margin: 0,
-    lineHeight: 16,
     font: {
       size: 14,
-      family: monospace
+      family: monospace,
+      color: $color
     }
-  },
-  'section#intro': {
-    background: {
-      color: transparent,
-      image: url('intro.png'),
-      position: group(top, center)
-    },
-    animation: {
-      name: 'spin',
-      duration: '4s'
-    }
-  },
-  '@keyframes spin': {
-    from: {transform: rotate(0)},
-    to:   {transform: rotate(360)}
   }
-}</textarea></div></div>
+});</textarea></div></div>
     <div><div><pre></pre></div></div>
   </body>
 </html>
