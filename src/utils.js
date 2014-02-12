@@ -16,7 +16,9 @@ var utils = function(){
     },
     doubleQuoteFind = /"/g,
     doubleQuoteReplace = '\\"',
+    empty = [],
     hexToRgb = function (hex) {
+      var i;
       hex = hex.slice(1);
       if (hex.length < 6) {
         hex = [
@@ -25,16 +27,16 @@ var utils = function(){
           hex[2] + hex[2]
         ].join('');
       }
+      i = hex.length === 6 ? 0 : 2;
       return [
-        parseInt(hex.slice(0, 2), 16),
-        parseInt(hex.slice(2, 4), 16),
-        parseInt(hex.slice(4, 6), 16),
-        (parseInt(hex.slice(6, 8) || 'FF', 16) / 255).toFixed(3)
+        parseInt(hex.slice(i, 2), 16),
+        parseInt(hex.slice(i + 2, 4), 16),
+        parseInt(hex.slice(i + 4, 6), 16),
+        i ? (parseInt(hex.slice(0, 2), 16) / 255).toFixed(3) : 1
       ];
     },
-    join = [].join,
     namedFunction = function (name, args) {
-      return name + '(' + join.call(args, ',') + ')'
+      return name + '(' + empty.join.call(args, ',') + ')'
     },
     namedMethod = function (name) {
       return function () {
@@ -61,19 +63,32 @@ var utils = function(){
           camelCaseReplace
         );
       },
-      cubicBezier: namedMethod('cubic-bezier'),
-      group: function () {
-        return join.call(arguments, ' ');
+      abs: Math.abs,
+      concat: function () {
+        return empty.join.call(arguments, ' ');
       },
-      hex: function (r, g, b) {
+      cubicBezier: namedMethod('cubic-bezier'),
+      floor: Math.floor,
+      hex: function (r, g, b, a) {
         return '#'.concat(
+          a == null ? '' : (
+            '0' + Math.round(a * 255).toString(16)
+          ).slice(-2),
           ('0' + r.toString(16)).slice(-2),
           ('0' + g.toString(16)).slice(-2),
           ('0' + b.toString(16)).slice(-2)
         );
       },
+      join: function () {
+        return empty.join.call(
+          empty.concat.apply(empty, arguments),
+          ','
+        );
+      },
       matrix: namedMethod('matrix'),
       matrix3d: namedMethod('matrix3d'),
+      max: Math.max,
+      min: Math.min,
       rgb: function rgb(r, g, b) {
         return g == null ?
           rgb.apply(utils, hexToRgb(r)) :
@@ -102,16 +117,20 @@ var utils = function(){
       skewX: angle('skewX'),
       skewY: angle('skewY'),
       perspective: namedMethod('perspective'),
+      round: Math.round,
+      quote: function (text) {
+        return '"' + text.replace(
+          doubleQuoteFind,
+          doubleQuoteReplace
+        ) + '"';
+      },
       translate: namedMethod('translate'),
       translate3d: namedMethod('translate3d'),
       translateX: namedMethod('translateX'),
       translateY: namedMethod('translateY'),
       translateZ: namedMethod('translateZ'),
       url: function(src) {
-        return 'url("' + src.replace(
-          doubleQuoteFind,
-          doubleQuoteReplace
-        ) + '")'
+        return 'url(' + utils.quote(src) + ')'
       }
     }
   ;
