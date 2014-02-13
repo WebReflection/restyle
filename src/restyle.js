@@ -110,8 +110,8 @@
     return css.join('');
   }
 
-  // JSLint, we meet again ...
-  if (typeof document === 'undefined') {
+  // hack to avoid JSLint shenanigans
+  if ({undefined: true}[typeof document]) {
     // in node, by default, no prefixes are used
     restyle = function (obj, prefixes) {
       return parse(obj, prefixes || empty);
@@ -130,8 +130,10 @@
           head.lastChild
         );
       node.type = 'text/css';
-      // JSLint, we meet again ...
-      if ('styleSheet' in node) {
+      // it should have been
+      // if ('styleSheet' in node) {}
+      // but JSLint bothers in that way
+      if (node.styleSheet) {
         node.styleSheet.cssText = css;
       } else {
         node.appendChild(d.createTextNode(css));
