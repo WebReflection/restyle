@@ -2,12 +2,16 @@
 <html>
   <head>
     <meta charset='utf-8' />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0"/>
     <title>restyle(customComponent)</title>
-    <!--[if IE lte 8]><script>document.createElement('js-component');</script><![endif]-->
+    <!--[if IE lte 8]><script>
+    document.createElement('js-component');
+    document.createElement('color');
+    </script><![endif]-->
     <script src="../test/build/restyle.js"></script>
     <script>
     restyle({
-      'js-component': {
+      'js-component, color': {
         padding: 8,
         display: 'block',
         textAlign: 'center',
@@ -15,13 +19,20 @@
           family: 'sans-serif',
           size: 16
         }
+      },
+      'color': {
+        backgroundColor: 'black',
+        color: 'white'
       }
     });
     </script>
   </head>
   <body>
     <js-component>
-      Hello Custom Component
+      Hello JS Component
     </js-component>
+    <color>
+      Hello Color Component
+    </color>
   </body>
 </html>
