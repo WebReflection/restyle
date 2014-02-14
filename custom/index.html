@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8' />
+    <meta name="description" content="Restyle : with" />
+    <title>with(restyle.properties)</title>
+    <!--[if IE lte 8]><script>document.createElement('js-component');</script><![endif]-->
+    <script src="../test/build/restyle.js"></script>
+    <script>
+    restyle({
+      'js-component': {
+        padding: 8,
+        display: 'block',
+        textAlign: 'center',
+        font: {
+          family: 'sans-serif',
+          size: 16
+        }
+      }
+    });
+    </script>
+  </head>
+  <body>
+    <js-component>
+      Hello Custom Component
+    </js-component>
+  </body>
+</html>
