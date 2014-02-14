@@ -46,6 +46,26 @@
       @*/
       var Delayed=function(e){function d(){Infinity===this.waiting&&0===this.waiting||clearTimeout(this.waiting);this.waiting=0}function f(c,b,a,d){c.waiting=0;b.apply(a,d)}function c(e,b){function a(){d.call(a);a.waiting=setTimeout(f,b,a,e,this,arguments)}b||(b=c.delay);a.clear=d;a.waiting=Infinity;return a}c.delay=e;return c}(500);
       var
+        simpleVar = '/\\$[0-9a-zA-Z_]+/',
+        $restyle = [
+          'return function s(t, y, l, e) {',
+            'for (y in t) {',
+              'if (t.hasOwnProperty(y)) {',
+                'l = t[y];',
+                'if (' + simpleVar + '.test(y)) {',
+                  'delete t[y];',
+                  't[y.replace(' + simpleVar + 'g, function (varName) {',
+                    'return eval(varName);',
+                  '})] = l;',
+                '}',
+                'if (typeof l === "object") {',
+                  's(l, y, e, 1)',
+                '}',
+              '}',
+            '}',
+            'return e || restyle(t)',
+          '}'
+        ].join('\n'),
         textarea = document.getElementsByTagName('textarea')[0],
         pre = document.getElementsByTagName('pre')[0],
         textContent = 'textContent' in pre ? 'textContent' : 'innerText',
@@ -80,7 +100,7 @@
               'with(restyle.properties){' + (
                 value.indexOf('restyle') < 0 ?
                   'return restyle(' + value + ')' :
-                  value.replace('restyle', 'return restyle')
+                  value.replace('restyle', $restyle)
               ) + '}'
             )();
             pre[textContent] = cssbeautify(value, {
