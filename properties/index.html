@@ -7,6 +7,7 @@
     <script src="../test/build/restyle.js"></script>
     <script src="../test/build/restyle.max.properties.js"></script>
     <script src="../javascripts/cssbeautify.js"></script>
+    <script src="../javascripts/autoprefixer.js"></script>
     <script>
     with(restyle.properties) {
       restyle({
@@ -92,6 +93,16 @@
         location.href = location.href.split('?')[0] + '?' +
           encodeURIComponent(btoa(textarea.value.replace(/^\s+|\s+$/g, '')));
       };
+      autoprefixer.default = [
+        'Android > 1',
+        'bb > 8',
+        'ie > 7',
+        'ff > 2',
+        'ff ESR',
+        'iOS > 3',
+        'Opera > 11',
+        'Safari > 4'
+      ];
       textarea.onkeyup = Delayed(function () {
         value = textarea.value.replace(/^\s+|\s+$/g, '');
         if (value.length) {
@@ -103,11 +114,11 @@
                   value.replace('restyle', $restyle)
               ) + '}'
             )();
-            pre[textContent] = cssbeautify(value, {
+            pre[textContent] = autoprefixer.process(cssbeautify(value, {
               indent: '  ',
               openbrace: 'end-of-line',
               autosemicolon: false
-            });
+            }));
           } catch(o_O){
             throw o_O;
           }
