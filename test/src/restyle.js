@@ -12,12 +12,29 @@
     empty = [],
     restyle;
 
-  function ReStyle(node, css) {
+  function ReStyle(node, css, prefixes, doc) {
     this.node = node;
     this.css = css;
+    this.prefixes = prefixes;
+    this.doc = doc;
   }
 
   ReStyle.prototype = {
+    replace: function (substitute) {
+      if (!(substitute instanceof ReStyle)) {
+        substitute = restyle(
+          substitute, this.prefixes, this.doc
+        );
+      }
+      this.remove();
+      ReStyle.call(
+        this,
+        substitute.node,
+        substitute.css,
+        substitute.prefixes,
+        substitute.doc
+      );
+    },
     remove: function () {
       var node = this.node,
         parentNode = node.parentNode;
@@ -110,8 +127,8 @@
     return css.join('');
   }
 
-  // JSLint, we meet again ...
-  if (typeof document === 'undefined') {
+  // hack to avoid JSLint shenanigans
+  if ({undefined: true}[typeof document]) {
     // in node, by default, no prefixes are used
     restyle = function (obj, prefixes) {
       return parse(obj, prefixes || empty);
@@ -120,8 +137,8 @@
     restyle.restyle = restyle;
   } else {
     restyle = function (obj, prefixes, doc) {
-      var d = doc || document,
-        css = parse(obj, prefixes || restyle.prefixes),
+      var d = doc || (doc = document),
+        css = parse(obj, prefixes || (prefixes = restyle.prefixes)),
         head = d.head ||
           d.getElementsByTagName('head')[0] ||
           d.documentElement,
@@ -130,13 +147,15 @@
           head.lastChild
         );
       node.type = 'text/css';
-      // JSLint, we meet again ...
-      if ('styleSheet' in node) {
+      // it should have been
+      // if ('styleSheet' in node) {}
+      // but JSLint bothers in that way
+      if (node.styleSheet) {
         node.styleSheet.cssText = css;
       } else {
         node.appendChild(d.createTextNode(css));
       }
-      return new ReStyle(node, css);
+      return new ReStyle(node, css, prefixes, doc);
     };
   }
 

@@ -269,5 +269,19 @@ wru.test([
       ));
       if (hasDOM) obj.remove();
     }
+  },{
+    name: 'replace',
+    test: function () {
+      var o = restyle({i:{display:'none'}}, ['test']),
+          node = o.node,
+          css = o.css;
+      if (typeof document !== 'undefined') {
+        o.replace({i:{display:'block'}});
+        wru.assert('previous node removed', !node.parentNode);
+        wru.assert('current node in place', !!o.node.parentNode);
+        wru.assert('CSS is different', css !== o.css);
+        wru.assert('same prefixes', o.prefixes.join(',') === 'test');
+      }
+    }
   }
 ]);
