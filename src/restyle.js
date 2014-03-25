@@ -12,12 +12,29 @@
     empty = [],
     restyle;
 
-  function ReStyle(node, css) {
+  function ReStyle(node, css, prefixes, doc) {
     this.node = node;
     this.css = css;
+    this.prefixes = prefixes;
+    this.doc = doc;
   }
 
   ReStyle.prototype = {
+    replace: function (substitute) {
+      if (!(substitute instanceof ReStyle)) {
+        substitute = restyle(
+          substitute, this.prefixes, this.doc
+        );
+      }
+      this.remove();
+      ReStyle.call(
+        this,
+        substitute.node,
+        substitute.css,
+        substitute.prefixes,
+        substitute.doc
+      );
+    },
     remove: function () {
       var node = this.node,
         parentNode = node.parentNode;
@@ -120,8 +137,8 @@
     restyle.restyle = restyle;
   } else {
     restyle = function (obj, prefixes, doc) {
-      var d = doc || document,
-        css = parse(obj, prefixes || restyle.prefixes),
+      var d = doc || (doc = document),
+        css = parse(obj, prefixes || (prefixes = restyle.prefixes)),
         head = d.head ||
           d.getElementsByTagName('head')[0] ||
           d.documentElement,
@@ -138,7 +155,7 @@
       } else {
         node.appendChild(d.createTextNode(css));
       }
-      return new ReStyle(node, css);
+      return new ReStyle(node, css, prefixes, doc);
     };
   }
 
