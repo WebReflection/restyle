@@ -373,5 +373,19 @@ wru.test([
       ));
       if (hasDOM) obj.remove();
     }
+  },{
+    name: 'customElement',
+    test: function () {
+      var i = 0;
+      if (typeof document === 'undefined') {
+        document = {};
+      }
+      document.registerElement = function (name, constructor, proto) {
+        i++;
+      };
+      if (!Object.create) Object.create = function(p){return p};
+      var obj = restyle.customElement('x-test', Function, {});
+      wru.assert(i === 1);
+    }
   }
 ]);

@@ -1,5 +1,5 @@
 {
-  "version": "0.2.1",
+  "version": "0.2.2",
   "license": "MIT",
   "name": "restyle",
   "description": "a JS to CSS transformer",
