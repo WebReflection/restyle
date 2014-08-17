@@ -283,5 +283,83 @@ wru.test([
         wru.assert('same prefixes', o.prefixes.join(',') === 'test');
       }
     }
+  },{
+    name: 'component - basic',
+    test: function () {
+      var obj = restyle('x-component', {i:{display:'none'}}, []);
+      wru.assert(obj == ''.concat(
+        'x-component i{',
+          'display:none;',
+        '}'
+      ));
+      if (hasDOM) obj.remove();
+    }
+  },{
+    name: 'component - advanced',
+    test: function () {
+      var obj = restyle(
+        'x-component',
+        {
+          'div': {
+            animation: {
+              name: 'spin',
+              duration: '4s'
+            }
+          },
+          '@media (max-width: 600px)': {
+            'div': {
+              display: 'none'
+            }
+          },
+          '@keyframes spin': {
+            from: {
+              transform: 'rotate(0deg)'
+            },
+            to: {
+              transform: 'rotate(360deg)'
+            }
+          },
+          '@font-face': {
+            font: {
+              family: 'restyled',
+              weight: 'normal',
+              style: 'bold'
+            }
+          }
+        },
+        ['webkit']
+      );
+      wru.assert(obj == ''.concat(
+        'x-component div{',
+          '-webkit-animation-name:spin;',
+          'animation-name:spin;',
+          '-webkit-animation-duration:4s;',
+          'animation-duration:4s;',
+        '}',
+        '@-webkit-media (max-width: 600px){',
+          'x-component div{-webkit-display:none;display:none;}',
+        '}',
+        '@media (max-width: 600px){',
+          'x-component div{-webkit-display:none;display:none;}',
+        '}',
+        '@-webkit-keyframes spin{',
+          'from{-webkit-transform:rotate(0deg);transform:rotate(0deg);}',
+          'to{-webkit-transform:rotate(360deg);transform:rotate(360deg);}',
+        '}',
+        '@keyframes spin{',
+          'from{-webkit-transform:rotate(0deg);transform:rotate(0deg);}',
+          'to{-webkit-transform:rotate(360deg);transform:rotate(360deg);}',
+        '}',
+        '@font-face{',
+          '-webkit-font-family:restyled;',
+          'font-family:restyled;',
+          '-webkit-font-weight:normal;',
+          'font-weight:normal;',
+          '-webkit-font-style:bold;',
+          'font-style:bold;',
+        '}'
+      ));
+      if (hasDOM) obj.remove();
+    }
   }
 ]);

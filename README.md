@@ -164,10 +164,35 @@ with the ability to drop all those styles at once:
 myStyle.remove();
 ```
 
+### New In Version 0.2
+The signature has been improved to accept a first argument representing a generic container/component prefix.
+```js
+var compStyle = restyle('my-component-name', {
+  'div.large': {
+    width: '100%'
+  },
+  span: {
+    display: 'none'
+  }
+});
+```
+Above code will produce a CSS similar to the following one:
+```css
+my-component-name div.large {
+  width: 100%;
+}
+my-component-name span {
+  display: none;
+}
+```
+This can be very handy when you have to style [Custom Elements](https://github.com/WebReflection/document-register-element#document-register-element) or generic reusable web components.
+
+
 ### Signature
 ```javascript
 
 restyle(
+  [component, ] // an optional string used to auto prefix all styles under a node/component
   Object        // a JSONish object as spec'd
   [, prefixes]  // optional prefixes
                 // as node.js module this is by default an empty array

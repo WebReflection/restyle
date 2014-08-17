@@ -29,13 +29,15 @@ define((function (O) {
     has = O.hasOwnProperty,
     camelFind = /([a-z])([A-Z])/g,
     ignoreSpecial = /^@(?:page|font-face)/,
+    isMedia = /^@(?:media)/,
     isArray = Array.isArray || function (arr) {
       return toString.call(arr) === '[object Array]';
     },
     empty = [],
     restyle;
 
-  function ReStyle(node, css, prefixes, doc) {
+  function ReStyle(component, node, css, prefixes, doc) {
+    this.component = component;
     this.node = node;
     this.css = css;
     this.prefixes = prefixes;
@@ -46,12 +48,13 @@ define((function (O) {
     replace: function (substitute) {
       if (!(substitute instanceof ReStyle)) {
         substitute = restyle(
-          substitute, this.prefixes, this.doc
+          this.component, substitute, this.prefixes, this.doc
         );
       }
       this.remove();
       ReStyle.call(
         this,
+        substitute.component,
         substitute.node,
         substitute.css,
         substitute.prefixes,
@@ -121,14 +124,16 @@ define((function (O) {
     return css.join('');
   }
 
-  function parse(obj, prefixes) {
+  function parse(component, obj, prefixes) {
     var
       css = [],
-      special, k, v,
+      at, cmp, special, k, v,
       key, value, i, j;
     for (key in obj) {
       if (has.call(obj, key)) {
-        special = key.charAt(0) === '@' && !ignoreSpecial.test(key);
+        at = key.charAt(0) === '@';
+        cmp = at && isMedia.test(key) ? component : '';
+        special = at && !ignoreSpecial.test(key);
         k = special ? key.slice(1) : key;
         value = empty.concat(obj[key]);
         for (i = 0; i < value.length; i++) {
@@ -137,12 +142,15 @@ define((function (O) {
             j = prefixes.length;
             while (j--) {
               css.push('@-', prefixes[j], '-', k, '{',
-                parse(v, [prefixes[j]]),
+                parse(cmp, v, [prefixes[j]]),
                 '}');
             }
-            css.push(key, '{', parse(v, prefixes), '}');
+            css.push(key, '{', parse(cmp, v, prefixes), '}');
           } else {
-            css.push(key, '{', generate([], '', v, prefixes), '}');
+            css.push(
+              at ? key : component + key,
+              '{', generate([], '', v, prefixes), '}'
+            );
           }
         }
       }
@@ -153,15 +161,30 @@ define((function (O) {
   // hack to avoid JSLint shenanigans
   if ({undefined: true}[typeof document]) {
     // in node, by default, no prefixes are used
-    restyle = function (obj, prefixes) {
-      return parse(obj, prefixes || empty);
+    restyle = function (component, obj, prefixes) {
+      if (typeof component === 'object') {
+        prefixes = obj;
+        obj = component;
+        component = '';
+      } else {
+        component += ' ';
+      }
+      return parse(component, obj, prefixes || empty);
     };
     // useful for different style of require
     restyle.restyle = restyle;
   } else {
-    restyle = function (obj, prefixes, doc) {
-      var d = doc || (doc = document),
-        css = parse(obj, prefixes || (prefixes = restyle.prefixes)),
+    restyle = function (component, obj, prefixes, doc) {
+      if (typeof component === 'object') {
+        doc = prefixes;
+        prefixes = obj;
+        obj = component;
+        c = (component = '');
+      } else {
+        c = component + ' ';
+      }
+      var c, d = doc || (doc = document),
+        css = parse(c, obj, prefixes || (prefixes = restyle.prefixes)),
         head = d.head ||
           d.getElementsByTagName('head')[0] ||
           d.documentElement,
@@ -178,7 +201,7 @@ define((function (O) {
       } else {
         node.appendChild(d.createTextNode(css));
       }
-      return new ReStyle(node, css, prefixes, doc);
+      return new ReStyle(component, node, css, prefixes, doc);
     };
   }
 
