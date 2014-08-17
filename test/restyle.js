@@ -361,5 +361,17 @@ wru.test([
       ));
       if (hasDOM) obj.remove();
     }
+  },{
+    name: 'same name for self description',
+    test: function () {
+      var obj = restyle('x-component', {'x-component':{display:'none'}}, []);
+      // should not create x-component x-component
+      wru.assert(obj == ''.concat(
+        'x-component{',
+          'display:none;',
+        '}'
+      ));
+      if (hasDOM) obj.remove();
+    }
   }
 ]);

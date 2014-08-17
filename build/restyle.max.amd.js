@@ -128,10 +128,11 @@ define((function (O) {
     var
       css = [],
       at, cmp, special, k, v,
-      key, value, i, j;
+      same, key, value, i, j;
     for (key in obj) {
       if (has.call(obj, key)) {
         at = key.charAt(0) === '@';
+        same = at || !component.indexOf(key + ' ');
         cmp = at && isMedia.test(key) ? component : '';
         special = at && !ignoreSpecial.test(key);
         k = special ? key.slice(1) : key;
@@ -148,7 +149,7 @@ define((function (O) {
             css.push(key, '{', parse(cmp, v, prefixes), '}');
           } else {
             css.push(
-              at ? key : component + key,
+              same ? key : component + key,
               '{', generate([], '', v, prefixes), '}'
             );
           }
