@@ -164,6 +164,46 @@ with the ability to drop all those styles at once:
 myStyle.remove();
 ```
 
+### New In Version 0.3
+It is now possible to simplify animations through the `animate` method.
+
+```js
+// a generic animation style
+var glowAnimation = restyle({
+  '@keyframes glow-animation': {
+    '0%':   { boxShadow: '0px 0px 0px 0px rgba(255,255,255,1)' },
+    '100%': { boxShadow: '0px 0px 32px 16px rgba(255,255,255,1)' }
+  },
+  '.glow': {
+    animation: {
+      name: 'glow-animation',
+      duration: '1s',
+      direction: 'normal'
+    }
+  }
+});
+
+// glowing function
+function glow(el, callback) {
+  el.classList.add('glow');
+  return glowAnimation.animate(el, 'glow-animation', callback);
+}
+
+// whenever is needed
+document.querySelector('#link')
+  .addEventListener('click', function (e) {
+    // glow
+    glow(e.currentTarget, function (event) {
+      console.log(event);
+    });
+  });
+
+```
+The fallback is based on `setTimeout` and the returned object has a `.drop()` method able to cancel the animation end event.
+The duration is retrieved automatically when the fallback is used.
+Please note the fallback is compatible with `s` or `ms` as seconds or milliseconds and nothing else.
+
+
 ### New In Version 0.2
 The signature has been improved to accept a first argument representing a generic container/component prefix.
 ```js

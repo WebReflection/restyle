@@ -183,6 +183,84 @@
     };
   }
 
+  // bringing animation utility in window-aware world only
+  if (!{undefined: true}[typeof window]) {
+    restyle.animate = (function (g) {
+      var type;
+      switch (true) {
+        case !!g.AnimationEvent:
+          type = 'animationend';
+          break;
+        case !!g.WebKitAnimationEvent:
+          type = 'webkitAnimationEnd';
+          break;
+        case !!g.MSAnimationEvent:
+          type = 'MSAnimationEnd';
+          break;
+        case !!g.OAnimationEvent:
+          type = 'oanimationend';
+          break;
+      }
+      ReStyle.prototype.animate = type ?
+        function animate(el, name, callback) {
+          function onAnimationEnd(e) {
+            if (e.animationName === name) {
+              drop();
+              callback.call(el, e);
+            }
+          }
+          function drop() {
+            el.removeEventListener(type, onAnimationEnd, false);
+          }
+          el.addEventListener(type, onAnimationEnd, false);
+          return {drop: drop};
+        } :
+        function animate(el, name, callback) {
+          var css = this.css, timer;
+          return el.className.split(/\s*/).reverse().some(function (chunk, i) {
+            if (
+              chunk.length &&
+              (new RegExp('\\.' + chunk + '(?:|\\{|\\,)([^}]+?)\\}')).test(css)
+            ) {
+              chunk = RegExp.$1;
+              if (
+                (new RegExp(
+                  'animation-name:' +
+                  name +
+                  ';.*?animation-duration:([^;]+?);'
+                )).test(chunk) ||
+                (new RegExp(
+                  'animation:\\s*' + name + '\\s+([^\\s]+?);'
+                )).test(chunk)
+              ) {
+                chunk = RegExp.$1;
+                i = parseFloat(chunk);
+                if (i) {
+                  timer = setTimeout(
+                    function () {
+                      callback.call(el, {
+                        type: 'animationend',
+                        animationName: name,
+                        currentTarget: el,
+                        target: el,
+                        stopImmediatePropagation: O,
+                        stopPropagation: O,
+                        preventDefault: O
+                      });
+                    },
+                    i *
+                    (chunk.slice(-2) !== 'ms' && chunk.slice(-1) === 's' ? 1000 : 1)
+                  );
+                  return true;
+                }
+              }
+            }
+          }) ? {drop: function () { clearTimeout(timer); }} : {drop: O};
+        }
+      ;
+    }(window));
+  }
+
   restyle.customElement = function (name, constructor, proto) {
     var key, prototype = Object.create(constructor.prototype);
     if (proto && proto.css) {
