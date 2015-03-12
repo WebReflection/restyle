@@ -206,7 +206,7 @@
       ReStyle.prototype.getAnimationDuration = function (el, name) {
         for (var
           chunk, duration,
-          classes = el.className.split(/\s*/),
+          classes = el.className.split(/\s+/),
           i = classes.length; i--;
         ) {
           chunk = classes[i];
