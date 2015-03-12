@@ -203,6 +203,8 @@ The fallback is based on `setTimeout` and the returned object has a `.drop()` me
 The duration is retrieved automatically when the fallback is used.
 Please note the fallback is compatible with `s` or `ms` as seconds or milliseconds and nothing else.
 
+It is possible to retrieve an animation duration through the `.getAnimationDuration(domElement, animationName)` method which returns `-1` in case of failure.
+
 
 ### New In Version 0.2
 The signature has been improved to accept a first argument representing a generic container/component prefix.

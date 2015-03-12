@@ -186,6 +186,7 @@
   // bringing animation utility in window-aware world only
   if (!{undefined: true}[typeof window]) {
     restyle.animate = (function (g) {
+
       var type;
       switch (true) {
         case !!g.AnimationEvent:
@@ -201,6 +202,40 @@
           type = 'oanimationend';
           break;
       }
+
+      ReStyle.prototype.getAnimationDuration = function (el, name) {
+        for (var
+          chunk, duration,
+          classes = el.className.split(/\s*/),
+          i = classes.length; i--;
+        ) {
+          chunk = classes[i];
+          if (
+            chunk.length &&
+            (new RegExp('\\.' + chunk + '(?:|\\{|\\,)([^}]+?)\\}')).test(this.css)
+          ) {
+            chunk = RegExp.$1;
+            if (
+              (new RegExp(
+                'animation-name:' +
+                name +
+                ';.*?animation-duration:([^;]+?);'
+              )).test(chunk) ||
+              (new RegExp(
+                'animation:\\s*' + name + '\\s+([^\\s]+?);'
+              )).test(chunk)
+            ) {
+              chunk = RegExp.$1;
+              duration = parseFloat(chunk);
+              if (duration) {
+                return duration * (/[^m]s$/.test(chunk) ? 1000 : 1);
+              }
+            }
+          }
+        }
+        return -1;
+      };
+
       ReStyle.prototype.animate = type ?
         function animate(el, name, callback) {
           function onAnimationEnd(e) {
@@ -216,46 +251,29 @@
           return {drop: drop};
         } :
         function animate(el, name, callback) {
-          var css = this.css, timer;
-          return el.className.split(/\s*/).reverse().some(function (chunk, i) {
-            if (
-              chunk.length &&
-              (new RegExp('\\.' + chunk + '(?:|\\{|\\,)([^}]+?)\\}')).test(css)
-            ) {
-              chunk = RegExp.$1;
-              if (
-                (new RegExp(
-                  'animation-name:' +
-                  name +
-                  ';.*?animation-duration:([^;]+?);'
-                )).test(chunk) ||
-                (new RegExp(
-                  'animation:\\s*' + name + '\\s+([^\\s]+?);'
-                )).test(chunk)
-              ) {
-                chunk = RegExp.$1;
-                i = parseFloat(chunk);
-                if (i) {
-                  timer = setTimeout(
-                    function () {
-                      callback.call(el, {
-                        type: 'animationend',
-                        animationName: name,
-                        currentTarget: el,
-                        target: el,
-                        stopImmediatePropagation: O,
-                        stopPropagation: O,
-                        preventDefault: O
-                      });
-                    },
-                    i *
-                    (chunk.slice(-2) !== 'ms' && chunk.slice(-1) === 's' ? 1000 : 1)
-                  );
-                  return true;
-                }
-              }
-            }
-          }) ? {drop: function () { clearTimeout(timer); }} : {drop: O};
+          var i, drop, duration = this.getAnimationDuration(el, name);
+          if (duration < 0) {
+            drop = O;
+          } else {
+            i = setTimeout(
+              function () {
+                callback.call(el, {
+                  type: 'animationend',
+                  animationName: name,
+                  currentTarget: el,
+                  target: el,
+                  stopImmediatePropagation: O,
+                  stopPropagation: O,
+                  preventDefault: O
+                });
+              },
+              duration
+            );
+            drop = function () {
+              clearTimeout(i);
+            };
+          }
+          return {drop: drop};
         }
       ;
     }(window));
