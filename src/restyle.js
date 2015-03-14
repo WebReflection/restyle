@@ -187,19 +187,38 @@
   if (!{undefined: true}[typeof window]) {
     restyle.animate = (function (g) {
 
-      var type;
+      var
+        animationType,
+        transitionType
+      ;
+
       switch (true) {
         case !!g.AnimationEvent:
-          type = 'animationend';
+          animationType = 'animationend';
           break;
         case !!g.WebKitAnimationEvent:
-          type = 'webkitAnimationEnd';
+          animationType = 'webkitAnimationEnd';
           break;
         case !!g.MSAnimationEvent:
-          type = 'MSAnimationEnd';
+          animationType = 'MSAnimationEnd';
           break;
         case !!g.OAnimationEvent:
-          type = 'oanimationend';
+          animationType = 'oanimationend';
+          break;
+      }
+
+      switch (true) {
+        case !!g.TransitionEvent:
+          transitionType = 'transitionend';
+          break;
+        case !!g.WebKitTransitionEvent:
+          transitionType = 'webkitTransitionEnd';
+          break;
+        case !!g.MSTransitionEvent:
+          transitionType = 'MSTransitionEnd';
+          break;
+        case !!g.OTransitionEvent:
+          transitionType = 'oTransitionEnd';
           break;
       }
 
@@ -236,7 +255,38 @@
         return -1;
       };
 
-      ReStyle.prototype.animate = type ?
+      ReStyle.prototype.getTransitionDuration = function (el) {
+        var
+          cs = getComputedStyle(el),
+          duration = cs.getPropertyValue('transition-duration') ||
+                     /\s(\d+(?:ms|s))/.test(
+                       cs.getPropertyValue('transition')
+                     ) && RegExp.$1
+        ;
+        return parseFloat(duration) * (/[^m]s$/.test(duration) ? 1000 : 1);
+      };
+
+      ReStyle.prototype.transit = transitionType ?
+        function (el, callback) {
+          function onTransitionEnd(e) {
+            drop();
+            callback.call(el, e);
+          }
+          function drop() {
+            el.removeEventListener(transitionType, onTransitionEnd, false);
+          }
+          el.addEventListener(transitionType, onTransitionEnd, false);
+          return {drop: drop};
+        } :
+        function (el, callback) {
+          var i = setTimeout(callback, this.getTransitionDuration(el));
+          return {drop: function () {
+            clearTimeout(i);
+          }};
+        }
+      ;
+
+      ReStyle.prototype.animate = animationType ?
         function animate(el, name, callback) {
           function onAnimationEnd(e) {
             if (e.animationName === name) {
@@ -245,9 +295,9 @@
             }
           }
           function drop() {
-            el.removeEventListener(type, onAnimationEnd, false);
+            el.removeEventListener(animationType, onAnimationEnd, false);
           }
-          el.addEventListener(type, onAnimationEnd, false);
+          el.addEventListener(animationType, onAnimationEnd, false);
           return {drop: drop};
         } :
         function animate(el, name, callback) {
