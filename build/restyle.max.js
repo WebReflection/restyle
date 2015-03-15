@@ -353,14 +353,32 @@ var restyle = (function (O) {
   }
 
   restyle.customElement = function (name, constructor, proto) {
-    var key, prototype = Object.create(constructor.prototype);
-    if (proto && proto.css) {
-      proto.css = restyle(name, proto.css);
+    var
+      key,
+      ext = 'extends',
+      prototype = Object.create(constructor.prototype),
+      descriptor = {prototype: prototype},
+      has = descriptor.hasOwnProperty,
+      isExtending = proto && has.call(proto, ext)
+    ;
+    if (isExtending) {
+      descriptor[ext] = proto[ext];
     }
     for (key in proto) {
-      prototype[key] = proto[key];
+      if (key !== ext) {
+        prototype[key] = (
+          key === 'css' ?
+            restyle(
+              isExtending ?
+               (proto[ext] + '[is=' + name + ']') :
+               name,
+              proto[key]
+            ) :
+            proto[key]
+        );
+      }
     }
-    return document.registerElement(name, {prototype: prototype});
+    return document.registerElement(name, descriptor);
   };
 
   restyle.prefixes = [

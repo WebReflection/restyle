@@ -1,5 +1,5 @@
 {
-  "version": "0.3.3",
+  "version": "0.3.4",
   "license": "MIT",
   "name": "restyle",
   "description": "a JS to CSS transformer",
@@ -15,9 +15,11 @@
   },
   "main": "./build/restyle.node.js",
   "scripts": {
-    "test": "node test/.test.js"
+    "test": "node test/.test.js",
+    "web": "IP=0.0.0.0 node node_modules/polpetta"
   },
   "devDependencies": {
-    "wru": ">= 0.0.0"
+    "wru": ">= 0.0.0",
+    "polpetta": ">= 0.0.0"
   }
 }

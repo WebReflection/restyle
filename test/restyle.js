@@ -384,8 +384,34 @@ wru.test([
         i++;
       };
       if (!Object.create) Object.create = function(p){return p};
-      var obj = restyle.customElement('x-test', Function, {});
+      var obj = restyle.customElement('x-test', function () {}, {});
       wru.assert(i === 1);
+    }
+  },{
+    name: 'customElement via is',
+    test: function () {
+      var prefixes = restyle.prefixes,
+          args;
+      restyle.prefixes = [];
+      document.registerElement = function (name, descriptor) {
+        args = [name, descriptor];
+      };
+      restyle.customElement(
+        'x-clock',
+        function () {},
+        {
+          'extends': 'div',
+          css: {
+            'input': {border: 0}
+          }
+        }
+      );
+      wru.assert(args[0] === 'x-clock');
+      wru.assert(
+        (args[1].prototype.css.valueOf()) ===
+        'div[is=x-clock] input{border:0px;}'
+      );
+      restyle.prefixes = prefixes;
     }
   }
 ]);
