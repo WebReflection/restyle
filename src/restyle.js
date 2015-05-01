@@ -265,7 +265,8 @@
           if (to.length) {
             rAF(next);
           } else {
-            e.detail = result;
+            if (!e) e = new CustomEvent('transitionend', {detail: result});
+            else e.detail = result;
             if (callback) callback.call(el, e);
           }
         }
