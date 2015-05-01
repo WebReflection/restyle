@@ -211,6 +211,14 @@ define((function (O) {
     restyle.animate = (function (g) {
 
       var
+        rAF = window.requestAnimationFrame ||
+              window.webkitRequestAnimationFrame ||
+              window.mozRequestAnimationFrame ||
+              window.msRequestAnimationFrame ||
+              function (fn) { setTimeout(fn, 10); },
+        liveStyles = {},
+        uid = 'restyle-'.concat(Math.random() * (+new Date()), '-'),
+        uidIndex = 0,
         animationType,
         transitionType
       ;
@@ -244,6 +252,79 @@ define((function (O) {
           transitionType = 'oTransitionEnd';
           break;
       }
+
+      restyle.transition = function (el, info, callback) {
+        var
+          transition = info.transition || 'all .3s ease-out',
+          id = el.getAttribute('id'),
+          to = [].concat(info.to),
+          from = update({}, info.from),
+          noID = !id,
+          style = {},
+          currentID,
+          result,
+          live,
+          t
+        ;
+        function drop() {
+          if (transitionType) {
+            el.removeEventListener(transitionType, onTransitionEnd, false);
+          } else {
+            clearTimeout(t);
+            t = 0;
+          }
+        }
+        function next() {
+          style[currentID] = (live.last = update(from, to.shift()));
+          live.css.replace(style);
+          if (transitionType) {
+            el.addEventListener(transitionType, onTransitionEnd, false);
+          } else {
+            t = setTimeout(onTransitionEnd, 10);
+          }
+        }
+        function onTransitionEnd(e) {
+          drop();
+          if (to.length) {
+            rAF(next);
+          } else {
+            e.detail = result;
+            if (callback) callback.call(el, e);
+          }
+        }
+        function update(target, source) {
+          for (var k in source) target[k] = source[k];
+          return target;
+        }
+        if (noID) el.setAttribute('id', id = (uid + uidIndex++).replace('.','-'));
+        currentID = '#' + id;
+        if (liveStyles.hasOwnProperty(id)) {
+          live = liveStyles[id];
+          from = (live.last = update(live.last, from));
+          style[currentID] = from;
+          live.transition.remove();
+          live.css.replace(style);
+        } else {
+          live = liveStyles[id] = {
+            last: (style[currentID] = from),
+            css: restyle(style)
+          };
+        }
+        rAF(function() {
+          style[currentID] = {transition: transition};
+          live.transition = restyle(style);
+          rAF(next);
+        });
+        return (result = {
+          clean: function () {
+            if (noID) el.removeAttribute('id');
+            live.transition.remove();
+            live.css.remove();
+            delete liveStyles[id];
+          },
+          drop: drop
+        });
+      };
 
       ReStyle.prototype.getAnimationDuration = function (el, name) {
         for (var
