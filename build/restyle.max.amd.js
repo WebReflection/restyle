@@ -319,6 +319,7 @@ define((function (O) {
         return (result = {
           clean: function () {
             if (noID) el.removeAttribute('id');
+            drop();
             live.transition.remove();
             live.css.remove();
             delete liveStyles[id];
