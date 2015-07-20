@@ -4,7 +4,12 @@
   "name": "restyle",
   "description": "a JS to CSS transformer",
   "homepage": "https://github.com/WebReflection/restyle",
-  "keywords": [],
+  "keywords": [
+    "CSS",
+    "JS",
+    "CustomElement",
+    "transformer"
+  ],
   "author": {
     "name": "Andrea Giammarchi",
     "web": "http://webreflection.blogspot.com/"
