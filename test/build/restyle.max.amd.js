@@ -1,6 +1,6 @@
 /*jslint forin: true, plusplus: true, indent: 2, browser: true, unparam: true */
 /*!
-Copyright (C) 2014 by Andrea Giammarchi - @WebReflection
+Copyright (C) 2014-2015 by Andrea Giammarchi - @WebReflection
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -44,23 +44,27 @@ define((function (O) {
     this.doc = doc;
   }
 
-  ReStyle.prototype = {
-    replace: function (substitute) {
-      if (!(substitute instanceof ReStyle)) {
-        substitute = restyle(
-          this.component, substitute, this.prefixes, this.doc
-        );
-      }
-      this.remove();
-      ReStyle.call(
-        this,
-        substitute.component,
-        substitute.node,
-        substitute.css,
-        substitute.prefixes,
-        substitute.doc
+  function replace(substitute) {
+    if (!(substitute instanceof ReStyle)) {
+      substitute = restyle(
+        this.component, substitute, this.prefixes, this.doc
       );
-    },
+    }
+    this.remove();
+    ReStyle.call(
+      this,
+      substitute.component,
+      substitute.node,
+      substitute.css,
+      substitute.prefixes,
+      substitute.doc
+    );
+  }
+
+  ReStyle.prototype = {
+    overwrite: replace,
+    replace: replace,
+    set: replace,
     remove: function () {
       var node = this.node,
         parentNode = node.parentNode;
@@ -131,12 +135,14 @@ define((function (O) {
       same, key, value, i, j;
     for (key in obj) {
       if (has.call(obj, key)) {
+        j = key.length;
+        if (!j) key = component.slice(0, -1);
         at = key.charAt(0) === '@';
         same = at || !component.indexOf(key + ' ');
         cmp = at && isMedia.test(key) ? component : '';
         special = at && !ignoreSpecial.test(key);
         k = special ? key.slice(1) : key;
-        value = empty.concat(obj[key]);
+        value = empty.concat(obj[j ? key : '']);
         for (i = 0; i < value.length; i++) {
           v = value[i];
           if (special) {
@@ -210,21 +216,123 @@ define((function (O) {
   if (!{undefined: true}[typeof window]) {
     restyle.animate = (function (g) {
 
-      var type;
+      var
+        rAF = window.requestAnimationFrame ||
+              window.webkitRequestAnimationFrame ||
+              window.mozRequestAnimationFrame ||
+              window.msRequestAnimationFrame ||
+              function (fn) { setTimeout(fn, 10); },
+        liveStyles = {},
+        uid = 'restyle-'.concat(Math.random() * (+new Date()), '-'),
+        uidIndex = 0,
+        animationType,
+        transitionType
+      ;
+
       switch (true) {
         case !!g.AnimationEvent:
-          type = 'animationend';
+          animationType = 'animationend';
           break;
         case !!g.WebKitAnimationEvent:
-          type = 'webkitAnimationEnd';
+          animationType = 'webkitAnimationEnd';
           break;
         case !!g.MSAnimationEvent:
-          type = 'MSAnimationEnd';
+          animationType = 'MSAnimationEnd';
           break;
         case !!g.OAnimationEvent:
-          type = 'oanimationend';
+          animationType = 'oanimationend';
           break;
       }
+
+      switch (true) {
+        case !!g.TransitionEvent:
+          transitionType = 'transitionend';
+          break;
+        case !!g.WebKitTransitionEvent:
+          transitionType = 'webkitTransitionEnd';
+          break;
+        case !!g.MSTransitionEvent:
+          transitionType = 'MSTransitionEnd';
+          break;
+        case !!g.OTransitionEvent:
+          transitionType = 'oTransitionEnd';
+          break;
+      }
+
+      restyle.transition = function (el, info, callback) {
+        var
+          transition = info.transition || 'all .3s ease-out',
+          id = el.getAttribute('id'),
+          to = [].concat(info.to),
+          from = update({}, info.from),
+          noID = !id,
+          style = {},
+          currentID,
+          result,
+          live,
+          t
+        ;
+        function drop() {
+          if (transitionType) {
+            el.removeEventListener(transitionType, onTransitionEnd, false);
+          } else {
+            clearTimeout(t);
+            t = 0;
+          }
+        }
+        function next() {
+          style[currentID] = (live.last = update(from, to.shift()));
+          live.css.replace(style);
+          if (transitionType) {
+            el.addEventListener(transitionType, onTransitionEnd, false);
+          } else {
+            t = setTimeout(onTransitionEnd, 10);
+          }
+        }
+        function onTransitionEnd(e) {
+          drop();
+          if (to.length) {
+            rAF(next);
+          } else {
+            if (!e) e = new CustomEvent('transitionend', {detail: result});
+            else e.detail = result;
+            if (callback) callback.call(el, e);
+          }
+        }
+        function update(target, source) {
+          for (var k in source) target[k] = source[k];
+          return target;
+        }
+        if (noID) el.setAttribute('id', id = (uid + uidIndex++).replace('.','-'));
+        currentID = '#' + id;
+        if (liveStyles.hasOwnProperty(id)) {
+          live = liveStyles[id];
+          from = (live.last = update(live.last, from));
+          style[currentID] = from;
+          live.transition.remove();
+          live.css.replace(style);
+        } else {
+          live = liveStyles[id] = {
+            last: (style[currentID] = from),
+            css: restyle(style)
+          };
+        }
+        rAF(function() {
+          style[currentID] = {transition: transition};
+          live.transition = restyle(style);
+          rAF(next);
+        });
+        return (result = {
+          clean: function () {
+            if (noID) el.removeAttribute('id');
+            drop();
+            live.transition.remove();
+            live.css.remove();
+            delete liveStyles[id];
+          },
+          drop: drop
+        });
+      };
 
       ReStyle.prototype.getAnimationDuration = function (el, name) {
         for (var
@@ -259,7 +367,38 @@ define((function (O) {
         return -1;
       };
 
-      ReStyle.prototype.animate = type ?
+      ReStyle.prototype.getTransitionDuration = function (el) {
+        var
+          cs = getComputedStyle(el),
+          duration = cs.getPropertyValue('transition-duration') ||
+                     /\s(\d+(?:ms|s))/.test(
+                       cs.getPropertyValue('transition')
+                     ) && RegExp.$1
+        ;
+        return parseFloat(duration) * (/[^m]s$/.test(duration) ? 1000 : 1);
+      };
+
+      ReStyle.prototype.transit = transitionType ?
+        function (el, callback) {
+          function onTransitionEnd(e) {
+            drop();
+            callback.call(el, e);
+          }
+          function drop() {
+            el.removeEventListener(transitionType, onTransitionEnd, false);
+          }
+          el.addEventListener(transitionType, onTransitionEnd, false);
+          return {drop: drop};
+        } :
+        function (el, callback) {
+          var i = setTimeout(callback, this.getTransitionDuration(el));
+          return {drop: function () {
+            clearTimeout(i);
+          }};
+        }
+      ;
+
+      ReStyle.prototype.animate = animationType ?
         function animate(el, name, callback) {
           function onAnimationEnd(e) {
             if (e.animationName === name) {
@@ -268,9 +407,9 @@ define((function (O) {
             }
           }
           function drop() {
-            el.removeEventListener(type, onAnimationEnd, false);
+            el.removeEventListener(animationType, onAnimationEnd, false);
           }
-          el.addEventListener(type, onAnimationEnd, false);
+          el.addEventListener(animationType, onAnimationEnd, false);
           return {drop: drop};
         } :
         function animate(el, name, callback) {
@@ -303,14 +442,32 @@ define((function (O) {
   }
 
   restyle.customElement = function (name, constructor, proto) {
-    var key, prototype = Object.create(constructor.prototype);
-    if (proto && proto.css) {
-      proto.css = restyle(name, proto.css);
+    var
+      key,
+      ext = 'extends',
+      prototype = Object.create(constructor.prototype),
+      descriptor = {prototype: prototype},
+      has = descriptor.hasOwnProperty,
+      isExtending = proto && has.call(proto, ext)
+    ;
+    if (isExtending) {
+      descriptor[ext] = proto[ext];
     }
     for (key in proto) {
-      prototype[key] = proto[key];
+      if (key !== ext) {
+        prototype[key] = (
+          key === 'css' ?
+            restyle(
+              isExtending ?
+               (proto[ext] + '[is=' + name + ']') :
+               name,
+              proto[key]
+            ) :
+            proto[key]
+        );
+      }
     }
-    return document.registerElement(name, {prototype: prototype});
+    return document.registerElement(name, descriptor);
   };
 
   restyle.prefixes = [

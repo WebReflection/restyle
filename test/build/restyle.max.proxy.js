@@ -1,6 +1,6 @@
 /*jslint forin: true, plusplus: true, indent: 2, browser: true, unparam: true */
 /*!
-Copyright (C) 2014 by Andrea Giammarchi - @WebReflection
+Copyright (C) 2014-2015 by Andrea Giammarchi - @WebReflection
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
