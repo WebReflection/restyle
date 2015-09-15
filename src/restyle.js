@@ -21,23 +21,27 @@
     this.doc = doc;
   }
 
-  ReStyle.prototype = {
-    replace: function (substitute) {
-      if (!(substitute instanceof ReStyle)) {
-        substitute = restyle(
-          this.component, substitute, this.prefixes, this.doc
-        );
-      }
-      this.remove();
-      ReStyle.call(
-        this,
-        substitute.component,
-        substitute.node,
-        substitute.css,
-        substitute.prefixes,
-        substitute.doc
+  function replace(substitute) {
+    if (!(substitute instanceof ReStyle)) {
+      substitute = restyle(
+        this.component, substitute, this.prefixes, this.doc
       );
-    },
+    }
+    this.remove();
+    ReStyle.call(
+      this,
+      substitute.component,
+      substitute.node,
+      substitute.css,
+      substitute.prefixes,
+      substitute.doc
+    );
+  }
+
+  ReStyle.prototype = {
+    overwrite: replace,
+    replace: replace,
+    set: replace,
     remove: function () {
       var node = this.node,
         parentNode = node.parentNode;
