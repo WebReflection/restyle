@@ -413,5 +413,30 @@ wru.test([
       );
       restyle.prefixes = prefixes;
     }
+  }, {
+    name: 'empty string for same component',
+    test: function () {
+      var prefixes = restyle.prefixes,
+          args;
+      restyle.prefixes = [];
+      document.registerElement = function (name, descriptor) {
+        args = [name, descriptor];
+      };
+      restyle.customElement(
+        'x-dafuq',
+        function () {},
+        {
+          css: {
+            '': {fontSize: 37}
+          }
+        }
+      );
+      wru.assert(args[0] === 'x-dafuq');
+      wru.assert(
+        (args[1].prototype.css.valueOf()) ===
+        'x-dafuq{font-size:37px;}'
+      );
+      restyle.prefixes = prefixes;
+    }
   }
 ]);

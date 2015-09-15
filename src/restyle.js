@@ -108,12 +108,14 @@
       same, key, value, i, j;
     for (key in obj) {
       if (has.call(obj, key)) {
+        j = key.length;
+        if (!j) key = component.slice(0, -1);
         at = key.charAt(0) === '@';
         same = at || !component.indexOf(key + ' ');
         cmp = at && isMedia.test(key) ? component : '';
         special = at && !ignoreSpecial.test(key);
         k = special ? key.slice(1) : key;
-        value = empty.concat(obj[key]);
+        value = empty.concat(obj[j ? key : '']);
         for (i = 0; i < value.length; i++) {
           v = value[i];
           if (special) {
