@@ -193,9 +193,8 @@ var transition = restyle.transition(
     height: 0
   },
   to: [{
-    height: 200 // will keep opacity '0'
-  }{
-    opacity: '1' // will keep height 200
+    opacity: '1', // will keep opacity '0'
+    height: 200 // will keep height 200
   }],
   function onTransitionEnd(e) {
     console.log('transition completed');
