@@ -1,7 +1,7 @@
 restyle
 =======
 
-[![build status](https://secure.travis-ci.org/WebReflection/restyle.png)](http://travis-ci.org/WebReflection/restyle)
+[![build status](https://secure.travis-ci.org/WebReflection/restyle.svg)](http://travis-ci.org/WebReflection/restyle)
 
 **new** 10 minutes intro about [restyle.js in vimeo](https://vimeo.com/86671874)
 
@@ -194,7 +194,7 @@ var transition = restyle.transition(
   },
   to: [{
     height: 200 // will keep opacity '0'
-  }{
+  }, {
     opacity: '1' // will keep height 200
   }],
   function onTransitionEnd(e) {
