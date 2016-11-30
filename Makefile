@@ -35,7 +35,7 @@ build:
 var:
 	mkdir -p build
 	cat template/var.before $(VAR) template/var.after >build/no-copy.$(REPO).max.js
-	node node_modules/uglify-js/bin/uglifyjs --verbose build/no-copy.$(REPO).max.js >build/no-copy.$(REPO).js
+	node node_modules/.bin/uglifyjs --verbose build/no-copy.$(REPO).max.js >build/no-copy.$(REPO).js
 	cat $(LICENSE) build/no-copy.$(REPO).max.js >build/$(REPO).max.js
 	cat template/copyright build/no-copy.$(REPO).js >build/$(REPO).js
 	rm build/no-copy.$(REPO).max.js
@@ -50,7 +50,7 @@ node:
 amd:
 	mkdir -p build
 	cat template/amd.before $(AMD) template/amd.after >build/no-copy.$(REPO).max.amd.js
-	node node_modules/uglify-js/bin/uglifyjs --verbose build/no-copy.$(REPO).max.amd.js >build/no-copy.$(REPO).amd.js
+	node node_modules/.bin/uglifyjs --verbose build/no-copy.$(REPO).max.amd.js >build/no-copy.$(REPO).amd.js
 	cat $(LICENSE) build/no-copy.$(REPO).max.amd.js >build/$(REPO).max.amd.js
 	cat template/copyright build/no-copy.$(REPO).amd.js >build/$(REPO).amd.js
 	rm build/no-copy.$(REPO).max.amd.js
@@ -61,7 +61,7 @@ amd:
 proxy:
 	mkdir -p build
 	cat src/proxy-a.js src/utils.js src/proxyHandler.js src/proxy-z.js >build/no-copy.$(REPO).max.proxy.js
-	node node_modules/uglify-js/bin/uglifyjs --verbose build/no-copy.$(REPO).max.proxy.js >build/no-copy.$(REPO).proxy.js
+	node node_modules/.bin/uglifyjs --verbose build/no-copy.$(REPO).max.proxy.js >build/no-copy.$(REPO).proxy.js
 	cat $(LICENSE) build/no-copy.$(REPO).max.proxy.js >build/$(REPO).max.proxy.js
 	cat template/copyright build/no-copy.$(REPO).proxy.js >build/$(REPO).proxy.js
 	rm build/no-copy.$(REPO).max.proxy.js
@@ -72,7 +72,7 @@ proxy:
 properties:
 	mkdir -p build
 	cat src/properties-a.js src/utils.js src/properties.js src/properties-z.js >build/no-copy.$(REPO).max.properties.js
-	node node_modules/uglify-js/bin/uglifyjs --verbose build/no-copy.$(REPO).max.properties.js >build/no-copy.$(REPO).properties.js
+	node node_modules/.bin/uglifyjs --verbose build/no-copy.$(REPO).max.properties.js >build/no-copy.$(REPO).properties.js
 	cat $(LICENSE) build/no-copy.$(REPO).max.properties.js >build/$(REPO).max.properties.js
 	cat template/copyright build/no-copy.$(REPO).properties.js >build/$(REPO).properties.js
 	rm build/no-copy.$(REPO).max.properties.js
@@ -84,7 +84,7 @@ size:
 
 # hint built file
 hint:
-	node node_modules/jshint/bin/jshint build/$(REPO).max.js
+	node node_modules/.bin/jshint build/$(REPO).max.js
 
 # clean/remove build folder
 clean:
@@ -96,11 +96,11 @@ test:
 
 # launch polpetta (ctrl+click to open the page)
 web:
-	node node_modules/polpetta/build/polpetta ./
+	node node_modules/.bin/tiny-cdn run
 
 # markdown the readme and view it
 preview:
-	node_modules/markdown/bin/md2html.js README.md >README.md.htm
+	node_modules/.bin/md2html.js README.md >README.md.htm
 	cat template/md.before README.md.htm template/md.after >README.md.html
 	open README.md.html
 	sleep 3

@@ -21,10 +21,12 @@
   "main": "./build/restyle.node.js",
   "scripts": {
     "test": "node test/.test.js",
-    "web": "IP=0.0.0.0 node node_modules/polpetta"
+    "web": "tiny-cdn run"
   },
   "devDependencies": {
-    "wru": ">= 0.0.0",
-    "polpetta": ">= 0.0.0"
+    "jshint": "^2.9.4",
+    "tiny-cdn": "^0.7.0",
+    "uglify-js": "^1.3.5",
+    "wru": "^0.3.0"
   }
 }
