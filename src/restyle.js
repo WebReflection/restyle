@@ -61,7 +61,7 @@
   function convertArray(obj) {
     if (isArray(obj)) {
       for (var
-        curr,
+        j, curr,
         prev = [],
         arr = obj,
         obj = {},
@@ -71,7 +71,9 @@
         if (typeof curr === 'string') {
           prev.push(curr);
         } else {
-          obj[prev.join(',')] = curr;
+          for (j = 0; j < prev.length; j++) {
+            obj[prev[j]] = curr;
+          }
           prev = [];
         }
       }

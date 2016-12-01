@@ -471,7 +471,17 @@ wru.test([
         'p', {
           height: 50
         }
-      ]) === 'a,p{height:50px;}');
+      ]) === 'a{height:50px;}p{height:50px;}');
+    }
+  }, {
+    name: 'natural Array style with component',
+    test: function () {
+      wru.assert(restyle('custom-element', [
+        'a',
+        'p', {
+          height: 50
+        }
+      ]) === 'custom-element a{height:50px;}custom-element p{height:50px;}');
     }
   }
 ]);
