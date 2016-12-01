@@ -438,5 +438,50 @@ wru.test([
       );
       restyle.prefixes = prefixes;
     }
+  }, {
+    name: 'ampersand for same component',
+    test: function () {
+      var prefixes = restyle.prefixes,
+          args;
+      restyle.prefixes = [];
+      document.registerElement = function (name, descriptor) {
+        args = [name, descriptor];
+      };
+      restyle.customElement(
+        'x-dafuq',
+        function () {},
+        {
+          css: {
+            '&': {fontSize: 37}
+          }
+        }
+      );
+      wru.assert(args[0] === 'x-dafuq');
+      wru.assert(
+        (args[1].prototype.css.valueOf()) ===
+        'x-dafuq{font-size:37px;}'
+      );
+      restyle.prefixes = prefixes;
+    }
+  }, {
+    name: 'natural Array style',
+    test: function () {
+      wru.assert(restyle([
+        'a',
+        'p', {
+          height: 50
+        }
+      ]) === 'a{height:50px;}p{height:50px;}');
+    }
+  }, {
+    name: 'natural Array style with component',
+    test: function () {
+      wru.assert(restyle('custom-element', [
+        'a',
+        'p', {
+          height: 50
+        }
+      ]) === 'custom-element a{height:50px;}custom-element p{height:50px;}');
+    }
   }
 ]);

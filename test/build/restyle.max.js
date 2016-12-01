@@ -81,6 +81,29 @@ var restyle = (function (O) {
     return $1 + '-' + $2.toLowerCase();
   }
 
+  function convertArray(obj) {
+    if (isArray(obj)) {
+      for (var
+        j, curr,
+        prev = [],
+        arr = obj,
+        obj = {},
+        i = 0; i < arr.length; i++
+      ) {
+        curr = arr[i];
+        if (typeof curr === 'string') {
+          prev.push(curr);
+        } else {
+          for (j = 0; j < prev.length; j++) {
+            obj[prev[j]] = curr;
+          }
+          prev = [];
+        }
+      }
+    }
+    return obj;
+  }
+
   function create(key, value, prefixes) {
     var
       css = [],
@@ -131,18 +154,19 @@ var restyle = (function (O) {
   function parse(component, obj, prefixes) {
     var
       css = [],
-      at, cmp, special, k, v,
+      amp, at, cmp, special, k, v,
       same, key, value, i, j;
     for (key in obj) {
       if (has.call(obj, key)) {
         j = key.length;
-        if (!j) key = component.slice(0, -1);
+        amp = j ? key.charAt(0) === '&' : false;
+        if (amp || !j) key = component.slice(0, -1);
         at = key.charAt(0) === '@';
         same = at || !component.indexOf(key + ' ');
         cmp = at && isMedia.test(key) ? component : '';
         special = at && !ignoreSpecial.test(key);
         k = special ? key.slice(1) : key;
-        value = empty.concat(obj[j ? key : '']);
+        value = empty.concat(obj[amp ? '&' : (j ? key : '')]);
         for (i = 0; i < value.length; i++) {
           v = value[i];
           if (special) {
@@ -176,7 +200,7 @@ var restyle = (function (O) {
       } else {
         component += ' ';
       }
-      return parse(component, obj, prefixes || empty);
+      return parse(component, convertArray(obj), prefixes || empty);
     };
     // useful for different style of require
     restyle.restyle = restyle;
@@ -191,7 +215,7 @@ var restyle = (function (O) {
         c = component + ' ';
       }
       var c, d = doc || (doc = document),
-        css = parse(c, obj, prefixes || (prefixes = restyle.prefixes)),
+        css = parse(c, convertArray(obj), prefixes || (prefixes = restyle.prefixes)),
         head = d.head ||
           d.getElementsByTagName('head')[0] ||
           d.documentElement,
