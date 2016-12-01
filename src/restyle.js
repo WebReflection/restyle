@@ -58,6 +58,27 @@
     return $1 + '-' + $2.toLowerCase();
   }
 
+  function convertArray(obj) {
+    if (isArray(obj)) {
+      for (var
+        curr,
+        prev = [],
+        arr = obj,
+        obj = {},
+        i = 0; i < arr.length; i++
+      ) {
+        curr = arr[i];
+        if (typeof curr === 'string') {
+          prev.push(curr);
+        } else {
+          obj[prev.join(',')] = curr;
+          prev = [];
+        }
+      }
+    }
+    return obj;
+  }
+
   function create(key, value, prefixes) {
     var
       css = [],
@@ -154,7 +175,7 @@
       } else {
         component += ' ';
       }
-      return parse(component, obj, prefixes || empty);
+      return parse(component, convertArray(obj), prefixes || empty);
     };
     // useful for different style of require
     restyle.restyle = restyle;
@@ -169,7 +190,7 @@
         c = component + ' ';
       }
       var c, d = doc || (doc = document),
-        css = parse(c, obj, prefixes || (prefixes = restyle.prefixes)),
+        css = parse(c, convertArray(obj), prefixes || (prefixes = restyle.prefixes)),
         head = d.head ||
           d.getElementsByTagName('head')[0] ||
           d.documentElement,

@@ -463,5 +463,15 @@ wru.test([
       );
       restyle.prefixes = prefixes;
     }
+  }, {
+    name: 'natural Array style',
+    test: function () {
+      wru.assert(restyle([
+        'a',
+        'p', {
+          height: 50
+        }
+      ]) === 'a,p{height:50px;}');
+    }
   }
 ]);
