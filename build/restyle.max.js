@@ -154,19 +154,27 @@ var restyle = (function (O) {
   function parse(component, obj, prefixes) {
     var
       css = [],
+      vComponent = component.slice(0, -1),
       amp, at, cmp, special, k, v,
-      same, key, value, i, j;
+      same, key, vKey, value, i, j;
     for (key in obj) {
       if (has.call(obj, key)) {
+        vKey = '';
         j = key.length;
-        amp = j ? key.charAt(0) === '&' : false;
-        if (amp || !j) key = component.slice(0, -1);
-        at = key.charAt(0) === '@';
-        same = at || !component.indexOf(key + ' ');
+        amp = j ? (-1 < key.indexOf('&')) : false;
+        if (j) {
+          at = key.charAt(0) === '@';
+          if (amp) vKey = key.replace(/&/g, vComponent);
+        }
+        else {
+          key = vComponent;
+          at = false;
+        }
+        same = at || !component.indexOf((vKey || key) + ' ');
         cmp = at && isMedia.test(key) ? component : '';
         special = at && !ignoreSpecial.test(key);
         k = special ? key.slice(1) : key;
-        value = empty.concat(obj[amp ? '&' : (j ? key : '')]);
+        value = empty.concat(obj[j ? key : '']);
         for (i = 0; i < value.length; i++) {
           v = value[i];
           if (special) {
@@ -176,10 +184,10 @@ var restyle = (function (O) {
                 parse(cmp, v, [prefixes[j]]),
                 '}');
             }
-            css.push(key, '{', parse(cmp, v, prefixes), '}');
+            css.push((vKey || key), '{', parse(cmp, v, prefixes), '}');
           } else {
             css.push(
-              same ? key : component + key,
+              same ? (vKey || key) : (vKey || (component + key)),
               '{', generate([], '', v, prefixes), '}'
             );
           }

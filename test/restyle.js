@@ -483,5 +483,13 @@ wru.test([
         }
       ]) === 'custom-element a{height:50px;}custom-element p{height:50px;}');
     }
+  }, {
+    name: 'self reference with classes',
+    test: function () {
+      wru.assert(
+        restyle('comp', {'&.test .a,&.test .b':{width:100}}) ===
+        'comp.test .a,comp.test .b{width:100px;}'
+      );
+    }
   }
 ]);
